@@ -8,246 +8,122 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
-  --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
-  --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
-  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
-  --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;
-  --space-12:3rem;--space-16:4rem;
-  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;
-  --radius-xl:1rem;--radius-2xl:1.5rem;--radius-full:9999px;
-  --font-display:'Space Mono',monospace;
-  --font-body:'Space Grotesk',system-ui,sans-serif;
-  --transition:180ms cubic-bezier(0.16,1,0.3,1);
+:root{
+  --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);
+  --text-sm:clamp(.875rem,.8rem + .35vw,1rem);
+  --text-base:clamp(1rem,.95rem + .25vw,1.125rem);
+  --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+  --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --text-2xl:clamp(2rem,1.2rem + 2.5vw,3.5rem);
+  --sp1:.25rem;--sp2:.5rem;--sp3:.75rem;--sp4:1rem;--sp5:1.25rem;
+  --sp6:1.5rem;--sp8:2rem;--sp10:2.5rem;--sp12:3rem;--sp16:4rem;
+  --r-sm:.375rem;--r-md:.5rem;--r-lg:.75rem;--r-xl:1rem;--r-2xl:1.5rem;--r-full:9999px;
+  --f-display:'Space Mono',monospace;
+  --f-body:'Space Grotesk',system-ui,sans-serif;
+  --ease:180ms cubic-bezier(.16,1,.3,1);
 }
 :root,[data-theme="light"]{
-  --bg:#f0edf8;--surface:#f7f5fd;--surface-2:#ffffff;
-  --surface-offset:#e8e3f5;--border:oklch(0.4 0.08 290/.15);
-  --text:#1a1626;--text-muted:#6b6180;--text-faint:#b0a8c8;
-  --primary:#7c3aed;--primary-hover:#6d28d9;
-  --accent:#06b6d4;--accent-2:#f59e0b;
-  --shadow-sm:0 1px 3px oklch(0.3 0.1 290/.08);
-  --shadow-md:0 4px 16px oklch(0.3 0.1 290/.12);
-  --shadow-lg:0 12px 40px oklch(0.3 0.1 290/.18);
-}
-[data-theme="dark"]{
   --bg:#0d0b14;--surface:#13101e;--surface-2:#1a1628;
-  --surface-offset:#211c33;--border:oklch(0.8 0.05 290/.12);
-  --text:#e8e0f8;--text-muted:#9b91b8;--text-faint:#504870;
-  --primary:#a78bfa;--primary-hover:#8b5cf6;
-  --accent:#22d3ee;--accent-2:#fbbf24;
-  --shadow-sm:0 1px 3px oklch(0 0 0/.3);
-  --shadow-md:0 4px 16px oklch(0 0 0/.4);
-  --shadow-lg:0 12px 40px oklch(0 0 0/.5);
+  --surface-off:#211c33;--border:oklch(.8 .05 290/.12);
+  --text:#e8e0f8;--muted:#9b91b8;--faint:#504870;
+  --primary:#a78bfa;--ph:#8b5cf6;
+  --accent:#22d3ee;--accent2:#fbbf24;
+  --sh-sm:0 1px 3px oklch(0 0 0/.3);
+  --sh-md:0 4px 16px oklch(0 0 0/.4);
+  --sh-lg:0 12px 40px oklch(0 0 0/.5);
+}
+[data-theme="light"]{
+  --bg:#f0edf8;--surface:#f7f5fd;--surface-2:#fff;
+  --surface-off:#e8e3f5;--border:oklch(.4 .08 290/.15);
+  --text:#1a1626;--muted:#6b6180;--faint:#b0a8c8;
+  --primary:#7c3aed;--ph:#6d28d9;
+  --sh-sm:0 1px 3px oklch(.3 .1 290/.08);
+  --sh-md:0 4px 16px oklch(.3 .1 290/.12);
+  --sh-lg:0 12px 40px oklch(.3 .1 290/.18);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
-body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--text);background:var(--bg);transition:background var(--transition),color var(--transition);}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+body{min-height:100dvh;font-family:var(--f-body);font-size:var(--text-base);color:var(--text);background:var(--bg);overflow-x:hidden;}
 button{cursor:pointer;border:none;background:none;font:inherit;color:inherit;}
 input{font:inherit;color:inherit;}
 a{color:inherit;}
-.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;opacity:.25;}
-.orb-1{width:400px;height:400px;top:-100px;right:-50px;background:var(--primary);}
-.orb-2{width:300px;height:300px;bottom:-80px;left:-60px;background:var(--accent);opacity:.15;}
+/* BG CANVAS */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;}
 nav{
   position:sticky;top:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
-  padding:var(--space-4) var(--space-6);
+  padding:var(--sp4) var(--sp6);
   background:oklch(from var(--bg) l c h/.85);
-  backdrop-filter:blur(20px);
+  backdrop-filter:blur(24px);
   border-bottom:1px solid var(--border);
 }
-.nav-logo{
-  display:flex;align-items:center;gap:var(--space-2);
-  font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;
-  letter-spacing:-.02em;
-}
-.nav-logo span.purple{color:var(--primary);}
-.nav-logo span.cyan{color:var(--accent);}
-.btn-icon{
-  width:36px;height:36px;border-radius:var(--radius-md);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--text-muted);border:1px solid var(--border);
-  background:var(--surface);transition:all var(--transition);
-}
-.btn-icon:hover{color:var(--text);background:var(--surface-offset);}
-/* VIEWS */
+.nav-logo{display:flex;align-items:center;gap:var(--sp2);font-family:var(--f-display);font-size:var(--text-lg);font-weight:700;letter-spacing:-.02em;}
+.nav-logo .p{color:var(--primary);} .nav-logo .c{color:var(--accent);}
+.btn-icon{width:36px;height:36px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--muted);border:1px solid var(--border);background:var(--surface);transition:all var(--ease);}
+.btn-icon:hover{color:var(--text);background:var(--surface-off);}
 .view{display:none;}
 .view.active{display:flex;}
 /* ANIMATE VIEW */
-#view-animate{
-  flex:1;flex-direction:column;align-items:center;
-  padding:var(--space-8) var(--space-4) var(--space-16);
-}
-.animate-hero{text-align:center;max-width:600px;margin-bottom:var(--space-10);}
-.animate-hero h1{font-size:var(--text-2xl);font-weight:700;line-height:1.1;margin-bottom:var(--space-3);}
-.animate-hero p{color:var(--text-muted);font-size:var(--text-lg);}
-.word-input-card{
-  width:100%;max-width:540px;background:var(--surface);
-  border:1px solid var(--border);border-radius:var(--radius-2xl);
-  padding:var(--space-6);box-shadow:var(--shadow-md);margin-bottom:var(--space-8);
-}
-.word-input-row{display:flex;gap:var(--space-3);align-items:stretch;}
+#view-animate{flex:1;flex-direction:column;align-items:center;padding:var(--sp8) var(--sp4) var(--sp16);}
+.hero{text-align:center;max-width:600px;margin-bottom:var(--sp10);}
+.hero h1{font-size:var(--text-2xl);font-weight:700;line-height:1.1;margin-bottom:var(--sp3);
+  background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{color:var(--muted);font-size:var(--text-lg);}
+.card{width:100%;max-width:540px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-2xl);padding:var(--sp6);box-shadow:var(--sh-md);margin-bottom:var(--sp8);}
+.input-row{display:flex;gap:var(--sp3);align-items:stretch;}
 .word-field{flex:1;position:relative;}
-.word-field .form-input{
-  width:100%;padding:var(--space-3) var(--space-4);
-  border-radius:var(--radius-md);border:1px solid var(--border);
-  background:var(--surface-2);color:var(--text);outline:none;
-  transition:all var(--transition);
-  font-family:var(--font-display);font-size:var(--text-xl);
-  text-align:center;letter-spacing:.1em;text-transform:uppercase;padding-right:60px;
+.word-field input{
+  width:100%;padding:var(--sp3) var(--sp4);border-radius:var(--r-md);border:1px solid var(--border);
+  background:var(--surface-2);color:var(--text);outline:none;transition:all var(--ease);
+  font-family:var(--f-display);font-size:var(--text-xl);text-align:center;
+  letter-spacing:.12em;text-transform:uppercase;padding-right:60px;
 }
-.word-field .form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px oklch(from var(--primary) l c h/.2);}
-.word-field .form-input::placeholder{color:var(--text-faint);}
-.char-count{
-  position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);
-  font-size:var(--text-xs);color:var(--text-faint);font-family:var(--font-display);
-}
-.char-count.warning{color:var(--accent-2);}
-.btn-animate{
-  padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);
-  background:var(--primary);color:#fff;font-size:var(--text-base);
-  font-weight:700;transition:all var(--transition);white-space:nowrap;
-}
-.btn-animate:hover{background:var(--primary-hover);transform:translateY(-1px);}
-.style-row{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-4);}
-.style-chip{
-  padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);
-  font-size:var(--text-xs);font-weight:600;border:1px solid var(--border);
-  color:var(--text-muted);background:var(--surface-2);transition:all var(--transition);cursor:pointer;
-}
-.style-chip.active,.style-chip:hover{background:var(--primary);color:white;border-color:var(--primary);}
-.stage-wrap{
-  width:100%;max-width:700px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-lg);
-}
-.stage-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:var(--space-4) var(--space-5);
-  border-bottom:1px solid var(--border);background:var(--surface-2);
-}
-.stage-title{font-size:var(--text-sm);font-weight:600;color:var(--text-muted);}
-.stage-actions{display:flex;gap:var(--space-2);}
-.stage{
-  min-height:200px;display:flex;align-items:center;justify-content:center;
-  padding:var(--space-10) var(--space-8);
-  background:radial-gradient(ellipse at center,var(--surface-offset) 0%,var(--bg) 100%);
-}
-.stage-letters{display:flex;gap:.05em;align-items:center;justify-content:center;}
-.letter{
-  font-family:var(--font-display);font-size:clamp(3rem,10vw,6rem);
-  font-weight:700;line-height:1;display:inline-block;
-  opacity:0;transform:translateY(40px) scale(.8);
-}
-.stage-empty{font-size:var(--text-sm);color:var(--text-faint);text-align:center;font-family:var(--font-display);}
-.share-bar{
-  display:none;padding:var(--space-3) var(--space-5);
-  border-top:1px solid var(--border);background:var(--surface);
-  align-items:center;gap:var(--space-3);
-}
+.word-field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px oklch(from var(--primary) l c h/.2);}
+.word-field input::placeholder{color:var(--faint);}
+.cc{position:absolute;right:var(--sp3);top:50%;transform:translateY(-50%);font-size:var(--text-xs);color:var(--faint);font-family:var(--f-display);}
+.cc.warn{color:var(--accent2);}
+.btn-go{padding:var(--sp3) var(--sp6);border-radius:var(--r-md);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-size:var(--text-base);font-weight:700;transition:all var(--ease);white-space:nowrap;border:none;}
+.btn-go:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 6px 24px oklch(from var(--primary) l c h/.4);}
+.chips{display:flex;gap:var(--sp2);flex-wrap:wrap;margin-top:var(--sp4);}
+.chip{padding:var(--sp1) var(--sp3);border-radius:var(--r-full);font-size:var(--text-xs);font-weight:600;border:1px solid var(--border);color:var(--muted);background:var(--surface-2);transition:all var(--ease);cursor:pointer;}
+.chip.active,.chip:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+/* STAGE */
+.stage-wrap{width:100%;max-width:760px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-2xl);overflow:hidden;box-shadow:var(--sh-lg);}
+.stage-hd{display:flex;align-items:center;justify-content:space-between;padding:var(--sp4) var(--sp5);border-bottom:1px solid var(--border);background:var(--surface-2);}
+.stage-title{font-size:var(--text-sm);font-weight:600;color:var(--muted);}
+.stage-acts{display:flex;gap:var(--sp2);}
+#three-canvas{width:100%;height:280px;display:block;cursor:grab;}
+#three-canvas:active{cursor:grabbing;}
+#canvas-placeholder{min-height:280px;display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);color:var(--faint);font-family:var(--f-display);background:radial-gradient(ellipse at center,var(--surface-off) 0%,var(--bg) 100%);}
+.share-bar{display:none;padding:var(--sp3) var(--sp5);border-top:1px solid var(--border);background:var(--surface);align-items:center;gap:var(--sp3);}
 .share-bar.show{display:flex;}
-.share-url{
-  flex:1;font-family:var(--font-display);font-size:var(--text-xs);
-  color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  background:var(--surface-offset);border-radius:var(--radius-sm);
-  padding:var(--space-2) var(--space-3);border:1px solid var(--border);
-}
-.btn-copy{
-  padding:var(--space-2) var(--space-4);border-radius:var(--radius-full);
-  background:var(--accent);color:#0c1820;font-size:var(--text-xs);
-  font-weight:700;transition:all var(--transition);white-space:nowrap;cursor:pointer;
-}
+.share-url{flex:1;font-family:var(--f-display);font-size:var(--text-xs);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:var(--surface-off);border-radius:var(--r-sm);padding:var(--sp2) var(--sp3);border:1px solid var(--border);}
+.btn-copy{padding:var(--sp2) var(--sp4);border-radius:var(--r-full);background:var(--accent);color:#0c1820;font-size:var(--text-xs);font-weight:700;transition:all var(--ease);white-space:nowrap;cursor:pointer;}
 .btn-copy:hover{opacity:.85;}
 .btn-copy.copied{background:#4ade80;}
-/* PUBLIC VIEW */
-#view-public{
-  flex:1;flex-direction:column;align-items:center;justify-content:center;
-  padding:var(--space-8) var(--space-4);
-}
-.public-stage{width:100%;max-width:800px;text-align:center;}
-.public-label{
-  font-size:var(--text-xs);color:var(--text-faint);
-  font-family:var(--font-display);text-transform:uppercase;
-  letter-spacing:.1em;margin-bottom:var(--space-6);
-}
-.public-big-letters{
-  display:flex;align-items:center;justify-content:center;
-  gap:.04em;flex-wrap:wrap;margin-bottom:var(--space-8);
-}
-.public-letter{
-  font-family:var(--font-display);font-size:clamp(5rem,18vw,12rem);
-  font-weight:700;line-height:1;display:inline-block;opacity:0;
-}
-.public-try{margin-top:var(--space-8);font-size:var(--text-sm);color:var(--text-muted);}
-.public-try a{color:var(--primary);text-decoration:none;font-weight:600;}
-.public-try a:hover{text-decoration:underline;}
-/* ANIMATIONS */
-@keyframes popIn{
-  0%{opacity:0;transform:translateY(40px) scale(.6);}
-  60%{opacity:1;transform:translateY(-8px) scale(1.05);}
-  100%{opacity:1;transform:translateY(0) scale(1);}
-}
-@keyframes waveIn{
-  0%{opacity:0;transform:translateY(0) rotate(-15deg) scale(.5);}
-  60%{opacity:1;transform:translateY(-15px) rotate(5deg) scale(1.1);}
-  100%{opacity:1;transform:translateY(0) rotate(0deg) scale(1);}
-}
-@keyframes glitch1{
-  0%{transform:translate(0);opacity:0;}
-  10%{transform:translate(-4px,2px);opacity:1;}
-  20%{transform:translate(4px,-2px);opacity:1;}
-  30%{transform:translate(-2px,4px);opacity:1;}
-  40%{transform:translate(0);opacity:1;}
-  100%{transform:translate(0);opacity:1;}
-}
-@keyframes fireIn{
-  0%{opacity:0;transform:scaleY(.1) scaleX(1.4);filter:blur(4px);}
-  50%{opacity:1;transform:scaleY(1.15) scaleX(.9);filter:blur(0);}
-  70%{transform:scaleY(.95) scaleX(1.05);}
-  100%{opacity:1;transform:scale(1);}
-}
-@keyframes neonPulse{
-  0%,100%{text-shadow:0 0 8px currentColor,0 0 20px currentColor;}
-  50%{text-shadow:0 0 16px currentColor,0 0 40px currentColor,0 0 60px currentColor;}
-}
-@keyframes spin3d{
-  0%{opacity:0;transform:perspective(400px) rotateY(90deg);}
-  60%{opacity:1;transform:perspective(400px) rotateY(-10deg);}
-  100%{opacity:1;transform:perspective(400px) rotateY(0deg);}
-}
-@keyframes rainbowColor{
-  0%{color:#f87171;}16%{color:#fb923c;}33%{color:#facc15;}
-  50%{color:#4ade80;}66%{color:#60a5fa;}83%{color:#c084fc;}100%{color:#f87171;}
-}
-.anim-pop .letter-done{animation:neonPulse 2s ease-in-out infinite;}
-.anim-rainbow .letter-done{animation:rainbowColor 2s linear infinite;}
+/* PUBLIC */
+#view-public{flex:1;flex-direction:column;align-items:center;justify-content:center;padding:var(--sp8) var(--sp4);}
+.pub-wrap{width:100%;max-width:900px;text-align:center;}
+.pub-label{font-size:var(--text-xs);color:var(--faint);font-family:var(--f-display);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--sp6);}
+#pub-canvas{width:100%;height:380px;display:block;border-radius:var(--r-2xl);border:1px solid var(--border);}
+.pub-try{margin-top:var(--sp8);font-size:var(--text-sm);color:var(--muted);}
+.pub-try a{color:var(--primary);text-decoration:none;font-weight:600;}
+.pub-try a:hover{text-decoration:underline;}
 /* TOAST */
-.toast{
-  position:fixed;bottom:var(--space-6);left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-full);
-  padding:var(--space-2) var(--space-6);font-size:var(--text-sm);font-weight:500;
-  box-shadow:var(--shadow-md);z-index:999;opacity:0;transition:all .3s ease;
-  pointer-events:none;
-}
+.toast{position:fixed;bottom:var(--sp6);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);padding:var(--sp2) var(--sp6);font-size:var(--text-sm);font-weight:500;box-shadow:var(--sh-md);z-index:999;opacity:0;transition:all .3s ease;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 @media(max-width:600px){
-  nav{padding:var(--space-3) var(--space-4);}
-  .word-input-row{flex-direction:column;}
-  .stage{padding:var(--space-8) var(--space-4);}
+  nav{padding:var(--sp3) var(--sp4);}
+  .input-row{flex-direction:column;}
+  #three-canvas{height:220px;}
+  #pub-canvas{height:280px;}
 }
 </style>
 </head>
 <body>
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
+<canvas id="bg-canvas"></canvas>
 <div class="app">
-
 <nav>
   <div class="nav-logo">
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="ShivAnimate">
@@ -257,51 +133,48 @@ nav{
       <rect x="16" y="16" width="10" height="10" rx="2" fill="var(--primary)" opacity=".7"/>
       <circle cx="14" cy="14" r="3" fill="white" opacity=".9"/>
     </svg>
-    <span><span class="purple">Shiv</span><span class="cyan">Animate</span></span>
+    <span><span class="p">Shiv</span><span class="c">Animate</span></span>
   </div>
-  <button class="btn-icon" data-theme-toggle aria-label="Toggle theme">
+  <button class="btn-icon" id="theme-btn" aria-label="Toggle theme">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
   </button>
 </nav>
 
-<!-- ANIMATE VIEW -->
 <div id="view-animate" class="view active">
-  <div class="animate-hero">
-    <h1>Type a word.<br>Watch it come alive.</h1>
-    <p>Up to 9 characters — then share the magic ✦</p>
+  <div class="hero">
+    <h1>Type a word.<br>Watch it explode in 3D.</h1>
+    <p>Up to 9 characters &mdash; powered by Three.js ✦</p>
   </div>
-  <div class="word-input-card">
-    <div class="word-input-row">
+  <div class="card">
+    <div class="input-row">
       <div class="word-field">
-        <input id="word-input" class="form-input" type="text" maxlength="9"
-          placeholder="HELLO" oninput="onWordInput()" onkeydown="onWordKeydown(event)"
+        <input id="word-input" type="text" maxlength="9" placeholder="HELLO"
+          oninput="onWordInput()" onkeydown="if(event.key==='Enter')animateWord()"
           autocomplete="off" spellcheck="false">
-        <span class="char-count" id="char-count">0/9</span>
+        <span class="cc" id="cc">0/9</span>
       </div>
-      <button class="btn-animate" onclick="animateWord()">✦ Animate</button>
+      <button class="btn-go" onclick="animateWord()">✦ Animate</button>
     </div>
-    <div class="style-row">
-      <span class="style-chip active" onclick="selectStyle(this,'pop')">✦ Pop</span>
-      <span class="style-chip" onclick="selectStyle(this,'wave')">〰 Wave</span>
-      <span class="style-chip" onclick="selectStyle(this,'glitch')">⚡ Glitch</span>
-      <span class="style-chip" onclick="selectStyle(this,'fire')">🔥 Fire</span>
-      <span class="style-chip" onclick="selectStyle(this,'spin')">↻ Spin</span>
-      <span class="style-chip" onclick="selectStyle(this,'rainbow')">🌈 Rainbow</span>
+    <div class="chips">
+      <span class="chip active" onclick="selectStyle(this,'pop')">✦ Pop</span>
+      <span class="chip" onclick="selectStyle(this,'wave')">〰 Wave</span>
+      <span class="chip" onclick="selectStyle(this,'glitch')">⚡ Glitch</span>
+      <span class="chip" onclick="selectStyle(this,'fire')">🔥 Fire</span>
+      <span class="chip" onclick="selectStyle(this,'spin')">↻ Spin 3D</span>
+      <span class="chip" onclick="selectStyle(this,'rainbow')">🌈 Rainbow</span>
     </div>
   </div>
   <div class="stage-wrap">
-    <div class="stage-header">
-      <span class="stage-title" id="stage-label">Preview</span>
-      <div class="stage-actions">
+    <div class="stage-hd">
+      <span class="stage-title" id="stage-label">3D Preview</span>
+      <div class="stage-acts">
         <button class="btn-icon" onclick="replayAnimation()" title="Replay">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
         </button>
       </div>
     </div>
-    <div class="stage" id="stage">
-      <div class="stage-empty" id="stage-empty">Type a word above ↑</div>
-      <div class="stage-letters" id="stage-letters"></div>
-    </div>
+    <div id="canvas-placeholder">Type a word above ↑</div>
+    <canvas id="three-canvas" style="display:none;"></canvas>
     <div class="share-bar" id="share-bar">
       <span class="share-url" id="share-url-text"></span>
       <button class="btn-copy" id="btn-copy" onclick="copyShareUrl()">Copy link</button>
@@ -309,151 +182,427 @@ nav{
   </div>
 </div>
 
-<!-- PUBLIC VIEW -->
 <div id="view-public" class="view">
-  <div class="public-stage">
-    <div class="public-label">✦ ShivAnimate — Someone shared this with you</div>
-    <div class="public-big-letters" id="public-letters"></div>
-    <div class="public-try">
-      Animate your own word — <a href="#" onclick="goHome(event)">Try ShivAnimate →</a>
-    </div>
+  <div class="pub-wrap">
+    <div class="pub-label">✦ ShivAnimate — Someone shared this with you</div>
+    <canvas id="pub-canvas"></canvas>
+    <div class="pub-try">Animate your own word — <a href="#" onclick="goHome(event)">Try ShivAnimate →</a></div>
   </div>
 </div>
-
 </div>
 <div class="toast" id="toast"></div>
 
-<script>
-let currentWord='',currentStyle='pop';
-const COLORS=['var(--primary)','var(--accent)','#f87171','#fb923c','#facc15','#4ade80','#60a5fa','#c084fc','#f472b6'];
-const ANIMS={
-  pop:    (el,i)=>{el.style.animation=`popIn .5s cubic-bezier(.34,1.56,.64,1) ${i*80}ms both`;},
-  wave:   (el,i)=>{el.style.animation=`waveIn .6s cubic-bezier(.34,1.56,.64,1) ${i*100}ms both`;},
-  glitch: (el,i)=>{el.style.animation=`glitch1 .7s ease ${i*60}ms both`;},
-  fire:   (el,i)=>{el.style.animation=`fireIn .5s ease-out ${i*70}ms both`;},
-  spin:   (el,i)=>{el.style.animation=`spin3d .6s ease ${i*90}ms both`;},
-  rainbow:(el,i)=>{el.style.animation=`popIn .5s cubic-bezier(.34,1.56,.64,1) ${i*80}ms both`;}
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://esm.sh/three@0.165.0",
+    "three/addons/": "https://esm.sh/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let currentWord = '', currentStyle = 'pop';
+let threeScene, threeCamera, threeRenderer, threeComposer;
+let letterMeshes = [], animClock, animating = false;
+let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+let loadedFont = null;
+const FONT_URL = 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json';
+
+// Style palette: [primary hex, secondary hex]
+const STYLE_COLORS = {
+  pop:     ['#a78bfa','#22d3ee'],
+  wave:    ['#22d3ee','#4ade80'],
+  glitch:  ['#f87171','#fbbf24'],
+  fire:    ['#fb923c','#fbbf24'],
+  spin:    ['#60a5fa','#c084fc'],
+  rainbow: ['#f87171','#c084fc']
+};
+const RAINBOW = ['#f87171','#fb923c','#facc15','#4ade80','#60a5fa','#c084fc','#f472b6'];
+
+// ─── THEME ──────────────────────────────────────────────────────────────────
+let darkMode = true;
+const themeBtn = document.getElementById('theme-btn');
+themeBtn.addEventListener('click', () => {
+  darkMode = !darkMode;
+  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  themeBtn.innerHTML = darkMode
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  if (threeRenderer) threeRenderer.setClearColor(darkMode ? 0x0d0b14 : 0xf0edf8);
+  if (bgRenderer) bgRenderer.setClearColor(darkMode ? 0x0d0b14 : 0xf0edf8);
+});
+
+// ─── INPUT ───────────────────────────────────────────────────────────────────
+window.onWordInput = () => {
+  const inp = document.getElementById('word-input');
+  const v = inp.value.replace(/[^a-zA-Z0-9]/g,'').slice(0,9);
+  inp.value = v;
+  const cc = document.getElementById('cc');
+  cc.textContent = v.length + '/9';
+  cc.className = 'cc' + (v.length >= 9 ? ' warn' : '');
 };
 
-// Theme toggle
-(function(){
-  const btn=document.querySelector('[data-theme-toggle]'),html=document.documentElement;
-  let dark=true;
-  if(btn)btn.addEventListener('click',()=>{
-    dark=!dark;
-    html.setAttribute('data-theme',dark?'dark':'light');
-    btn.innerHTML=dark
-      ?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
-      :'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
-  });
+window.selectStyle = (el, style) => {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentStyle = style;
+  if (currentWord) animateWord();
+};
+
+window.replayAnimation = () => { if (currentWord) { document.getElementById('word-input').value = currentWord; animateWord(); } };
+
+// ─── ROUTE ───────────────────────────────────────────────────────────────────
+window.showView = (name) => {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+};
+
+// ─── BACKGROUND PARTICLE SCENE ───────────────────────────────────────────────
+let bgRenderer, bgScene, bgCamera, bgParticles;
+(function initBg() {
+  const canvas = document.getElementById('bg-canvas');
+  bgRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+  bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  bgRenderer.setClearColor(0x0d0b14, 1);
+  bgScene = new THREE.Scene();
+  bgCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  bgCamera.position.z = 5;
+  const geo = new THREE.BufferGeometry();
+  const N = 1800;
+  const pos = new Float32Array(N * 3);
+  const col = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    pos[i*3]   = (Math.random()-0.5)*30;
+    pos[i*3+1] = (Math.random()-0.5)*30;
+    pos[i*3+2] = (Math.random()-0.5)*20;
+    const c = new THREE.Color();
+    c.setHSL(Math.random() * 0.2 + 0.7, 0.9, 0.7);
+    col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.PointsMaterial({ size: 0.055, vertexColors: true, transparent: true, opacity: 0.7 });
+  bgParticles = new THREE.Points(geo, mat);
+  bgScene.add(bgParticles);
+  function resizeBg() {
+    bgRenderer.setSize(window.innerWidth, window.innerHeight);
+    bgCamera.aspect = window.innerWidth / window.innerHeight;
+    bgCamera.updateProjectionMatrix();
+  }
+  resizeBg();
+  window.addEventListener('resize', resizeBg);
+  function loopBg(t) {
+    requestAnimationFrame(loopBg);
+    bgParticles.rotation.y = t * 0.00008;
+    bgParticles.rotation.x = t * 0.00003;
+    bgRenderer.render(bgScene, bgCamera);
+  }
+  requestAnimationFrame(loopBg);
 })();
 
-// On load: check for shared link
-(function(){
-  const hash=window.location.hash;
-  if(hash.startsWith('#animate/')){
-    const p=hash.split('/');
-    const word=(p[1]||'').toUpperCase().slice(0,9);
-    const style=p[2]||'pop';
-    if(word){showPublicView(word,style);return;}
+// ─── MOUSE PARALLAX ──────────────────────────────────────────────────────────
+window.addEventListener('mousemove', e => {
+  mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
+  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+// ─── LOAD FONT ───────────────────────────────────────────────────────────────
+const fontLoader = new FontLoader();
+fontLoader.load(FONT_URL, font => { loadedFont = font; });
+
+// ─── INIT STAGE SCENE ────────────────────────────────────────────────────────
+function initStageScene(canvas) {
+  if (threeRenderer) { threeRenderer.dispose(); }
+  const W = canvas.clientWidth, H = canvas.clientHeight;
+  threeRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  threeRenderer.setSize(W, H);
+  threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  threeRenderer.toneMappingExposure = 1.2;
+  threeRenderer.setClearColor(0x0d0b14, 1);
+  threeScene = new THREE.Scene();
+  threeCamera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
+  threeCamera.position.set(0, 0, 14);
+  // Lights
+  threeScene.add(new THREE.AmbientLight(0xffffff, 0.4));
+  const dL = new THREE.DirectionalLight(0xffffff, 1.5);
+  dL.position.set(5, 10, 8);
+  threeScene.add(dL);
+  const pL1 = new THREE.PointLight(0xa78bfa, 4, 30);
+  pL1.position.set(-6, 4, 6);
+  threeScene.add(pL1);
+  const pL2 = new THREE.PointLight(0x22d3ee, 4, 30);
+  pL2.position.set(6, -4, 6);
+  threeScene.add(pL2);
+  // Bloom
+  threeComposer = new EffectComposer(threeRenderer);
+  threeComposer.addPass(new RenderPass(threeScene, threeCamera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.7, 0.5, 0.2);
+  threeComposer.addPass(bloom);
+  // Grid floor
+  const grid = new THREE.GridHelper(40, 30, 0x333355, 0x222244);
+  grid.position.y = -3.5;
+  threeScene.add(grid);
+  // Resize
+  const ro = new ResizeObserver(() => {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    threeRenderer.setSize(w, h);
+    threeCamera.aspect = w / h;
+    threeCamera.updateProjectionMatrix();
+    threeComposer.setSize(w, h);
+  });
+  ro.observe(canvas);
+}
+
+// ─── BUILD LETTERS ──────────────────────────────────────────────────────────
+function buildLetters(word, style, scene) {
+  const colors = STYLE_COLORS[style] || STYLE_COLORS.pop;
+  const meshes = [];
+  const totalChars = word.length;
+  // estimate total width first (rough)
+  const estimatedW = totalChars * 1.6;
+  const startX = -estimatedW / 2 + 0.8;
+  word.split('').forEach((char, i) => {
+    const hexColor = style === 'rainbow'
+      ? RAINBOW[i % RAINBOW.length]
+      : (i % 2 === 0 ? colors[0] : colors[1]);
+    const geo = new TextGeometry(char, {
+      font: loadedFont,
+      size: 1.8,
+      depth: 0.45,
+      curveSegments: 8,
+      bevelEnabled: true,
+      bevelThickness: 0.08,
+      bevelSize: 0.04,
+      bevelSegments: 4
+    });
+    geo.computeBoundingBox();
+    const w = geo.boundingBox.max.x - geo.boundingBox.min.x;
+    const matColor = new THREE.Color(hexColor);
+    const mat = new THREE.MeshStandardMaterial({
+      color: matColor,
+      emissive: matColor,
+      emissiveIntensity: style === 'glitch' ? 0.8 : 0.3,
+      metalness: style === 'spin' ? 0.9 : 0.3,
+      roughness: style === 'spin' ? 0.1 : 0.4,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.x = startX + i * 1.9 - w / 2;
+    mesh.position.y = 0;
+    mesh.position.z = 0;
+    mesh.userData = { i, style, ox: mesh.position.x, oy: 0, phase: i * 0.6, startTime: null, entryDone: false };
+    scene.add(mesh);
+    meshes.push(mesh);
+  });
+  return meshes;
+}
+
+// ─── ANIMATE WORD ────────────────────────────────────────────────────────────
+window.animateWord = async () => {
+  const inp = document.getElementById('word-input');
+  const word = inp.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9);
+  if (!word) { showToast('Type a word first!'); return; }
+  if (!loadedFont) { showToast('Font loading… try again in a second!'); return; }
+  currentWord = word;
+  document.getElementById('canvas-placeholder').style.display = 'none';
+  const canvas = document.getElementById('three-canvas');
+  canvas.style.display = 'block';
+  initStageScene(canvas);
+  // clear old meshes
+  letterMeshes.forEach(m => { m.geometry.dispose(); m.material.dispose(); threeScene.remove(m); });
+  letterMeshes = buildLetters(word, currentStyle, threeScene);
+  document.getElementById('stage-label').textContent = word + '  •  ' + currentStyle + '  •  3D';
+  const shareUrl = location.origin + location.pathname + '#animate/' + word + '/' + currentStyle;
+  document.getElementById('share-url-text').textContent = shareUrl;
+  document.getElementById('share-bar').classList.add('show');
+  history.replaceState(null, '', '#animate/' + word + '/' + currentStyle);
+  if (!animating) startLoop(canvas);
+};
+
+// ─── RENDER LOOP ──────────────────────────────────────────────────────────────
+function startLoop(canvas) {
+  animating = true;
+  const clock = new THREE.Clock();
+  let drag = false, lastX = 0, cameraYaw = 0;
+  canvas.addEventListener('mousedown', e => { drag = true; lastX = e.clientX; });
+  window.addEventListener('mouseup', () => { drag = false; });
+  canvas.addEventListener('mousemove', e => {
+    if (drag) {
+      cameraYaw += (e.clientX - lastX) * 0.005;
+      lastX = e.clientX;
+    }
+  });
+  canvas.addEventListener('touchstart', e => { drag = true; lastX = e.touches[0].clientX; }, {passive:true});
+  canvas.addEventListener('touchend', () => { drag = false; }, {passive:true});
+  canvas.addEventListener('touchmove', e => {
+    if (drag) { cameraYaw += (e.touches[0].clientX - lastX) * 0.005; lastX = e.touches[0].clientX; }
+  }, {passive:true});
+  function loop() {
+    if (!animating) return;
+    requestAnimationFrame(loop);
+    const t = clock.getElapsedTime();
+    // Parallax / auto-rotate
+    targetX += (mouseX * 0.3 - targetX) * 0.05;
+    targetY += (-mouseY * 0.2 - targetY) * 0.05;
+    threeCamera.position.x = Math.sin(cameraYaw) * 14 + targetX * 2;
+    threeCamera.position.z = Math.cos(cameraYaw) * 14;
+    threeCamera.position.y = targetY * 2;
+    threeCamera.lookAt(0, 0, 0);
+    // Per-letter animation
+    letterMeshes.forEach(m => {
+      const d = m.userData;
+      if (!d.startTime) d.startTime = t;
+      const lt = t - d.startTime;
+      const entry = Math.min(lt / 0.6, 1);
+      const eased = 1 - Math.pow(1 - entry, 4);
+      switch (d.style) {
+        case 'pop':
+          m.scale.setScalar(eased < 1 ? eased * 1.1 : 1 + Math.sin(t * 2 + d.phase) * 0.04);
+          m.position.y = d.oy + (1 - eased) * 5 + Math.sin(t * 1.5 + d.phase) * 0.08;
+          break;
+        case 'wave':
+          m.position.y = d.oy + Math.sin(t * 2 + d.i * 0.8) * 0.5 + (1 - eased) * 4;
+          m.rotation.z = Math.sin(t * 1.5 + d.i * 0.6) * 0.12;
+          break;
+        case 'glitch':
+          const g = Math.random();
+          m.position.x = d.ox + (g < 0.02 ? (Math.random() - 0.5) * 0.8 : 0);
+          m.position.y = d.oy + (1 - eased) * 6 + (g < 0.02 ? (Math.random() - 0.5) * 0.4 : 0);
+          m.material.emissiveIntensity = 0.5 + Math.sin(t * 20 + d.i) * 0.3;
+          break;
+        case 'fire':
+          m.position.y = d.oy + Math.sin(t * 3 + d.i * 0.9) * 0.12 + (1 - eased) * 6;
+          m.scale.y = eased < 1 ? eased : 1 + Math.sin(t * 4 + d.i) * 0.03;
+          m.scale.x = eased < 1 ? eased : 1;
+          break;
+        case 'spin':
+          m.rotation.y = (1 - eased) * Math.PI * 2 + t * 0.4 + d.i * 0.3;
+          m.position.y = d.oy + (1 - eased) * 5;
+          break;
+        case 'rainbow':
+          const hue = (t * 0.4 + d.i * 0.15) % 1;
+          m.material.color.setHSL(hue, 1, 0.6);
+          m.material.emissive.setHSL(hue, 1, 0.4);
+          m.position.y = d.oy + Math.sin(t * 2.5 + d.i * 0.7) * 0.35 + (1 - eased) * 4;
+          break;
+      }
+    });
+    threeComposer.render();
+  }
+  loop();
+}
+
+// ─── PUBLIC VIEW ──────────────────────────────────────────────────────────────
+window.showPublicView = async (word, style) => {
+  showView('public');
+  if (!loadedFont) {
+    await new Promise(res => {
+      const check = setInterval(() => { if (loadedFont) { clearInterval(check); res(); } }, 100);
+    });
+  }
+  const canvas = document.getElementById('pub-canvas');
+  const W = canvas.clientWidth, H = canvas.clientHeight || 380;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.3;
+  renderer.setClearColor(0x0d0b14, 1);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
+  camera.position.set(0, 0, 14);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+  const dL = new THREE.DirectionalLight(0xffffff, 1.5); dL.position.set(5, 10, 8); scene.add(dL);
+  const pL1 = new THREE.PointLight(0xa78bfa, 5, 30); pL1.position.set(-6, 4, 6); scene.add(pL1);
+  const pL2 = new THREE.PointLight(0x22d3ee, 5, 30); pL2.position.set(6, -4, 6); scene.add(pL2);
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), 1.0, 0.6, 0.15));
+  const grid = new THREE.GridHelper(40, 30, 0x333355, 0x222244); grid.position.y = -3.5; scene.add(grid);
+  const meshes = buildLetters(word.toUpperCase(), style, scene);
+  const clock2 = new THREE.Clock();
+  let pubMX = 0, pubMY = 0, pubTX = 0, pubTY = 0;
+  window.addEventListener('mousemove', e => { pubMX = (e.clientX/innerWidth-.5)*2; pubMY = (e.clientY/innerHeight-.5)*2; });
+  function pubLoop() {
+    requestAnimationFrame(pubLoop);
+    const t = clock2.getElapsedTime();
+    pubTX += (pubMX * 0.3 - pubTX) * 0.05;
+    pubTY += (-pubMY * 0.2 - pubTY) * 0.05;
+    camera.position.x = pubTX * 2;
+    camera.position.y = pubTY * 2;
+    camera.lookAt(0, 0, 0);
+    meshes.forEach(m => {
+      const d = m.userData;
+      if (!d.startTime) d.startTime = t;
+      const lt = t - d.startTime;
+      const entry = Math.min(lt / 0.7, 1);
+      const eased = 1 - Math.pow(1 - entry, 4);
+      m.position.y = d.oy + (1 - eased) * 6 + Math.sin(t * 1.6 + d.phase) * 0.18;
+      m.scale.setScalar(eased < 1 ? eased * 1.05 : 1 + Math.sin(t * 2 + d.phase) * 0.04);
+      if (style === 'spin') m.rotation.y = (1 - eased) * Math.PI * 2 + t * 0.5 + d.i * 0.35;
+      if (style === 'rainbow') {
+        const hue = (t * 0.4 + d.i * 0.15) % 1;
+        m.material.color.setHSL(hue, 1, 0.6);
+        m.material.emissive.setHSL(hue, 1, 0.4);
+      }
+    });
+    composer.render();
+  }
+  pubLoop();
+};
+
+// ─── SHARE ────────────────────────────────────────────────────────────────────
+window.copyShareUrl = () => {
+  const url = document.getElementById('share-url-text').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy link'; btn.classList.remove('copied'); }, 2500);
+    showToast('Link copied! Share it with anyone ✦');
+  }).catch(() => showToast('Select the link and copy manually'));
+};
+
+window.goHome = (e) => {
+  e.preventDefault();
+  history.replaceState(null, '', location.pathname);
+  showView('animate');
+  currentWord = '';
+  document.getElementById('word-input').value = '';
+  document.getElementById('cc').textContent = '0/9';
+  animating = false;
+};
+
+window.showToast = (msg) => {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+};
+
+// ─── INIT ROUTE ───────────────────────────────────────────────────────────────
+(function() {
+  const hash = location.hash;
+  if (hash.startsWith('#animate/')) {
+    const p = hash.split('/');
+    const word = (p[1] || '').toUpperCase().slice(0, 9);
+    const style = p[2] || 'pop';
+    if (word) {
+      // wait for font
+      const wait = setInterval(() => {
+        if (loadedFont) { clearInterval(wait); showPublicView(word, style); }
+      }, 100);
+      return;
+    }
   }
   showView('animate');
 })();
-
-function showView(name){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+name).classList.add('active');
-}
-
-function onWordInput(){
-  const input=document.getElementById('word-input');
-  const val=input.value.replace(/[^a-zA-Z0-9]/g,'').slice(0,9);
-  input.value=val;
-  const count=document.getElementById('char-count');
-  count.textContent=val.length+'/9';
-  count.className='char-count'+(val.length>=9?' warning':'');
-}
-
-function onWordKeydown(e){if(e.key==='Enter')animateWord();}
-
-function selectStyle(el,style){
-  document.querySelectorAll('.style-chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');currentStyle=style;
-  if(currentWord)animateWord();
-}
-
-function animateWord(){
-  const input=document.getElementById('word-input');
-  const word=input.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9);
-  if(!word){showToast('Type a word first!');return;}
-  currentWord=word;
-  const lettersEl=document.getElementById('stage-letters');
-  document.getElementById('stage-empty').style.display='none';
-  lettersEl.innerHTML='';
-  lettersEl.className='stage-letters anim-'+currentStyle;
-  word.split('').forEach((char,i)=>{
-    const span=document.createElement('span');
-    span.className='letter';
-    span.textContent=char;
-    span.style.color=COLORS[i%COLORS.length];
-    lettersEl.appendChild(span);
-    requestAnimationFrame(()=>(ANIMS[currentStyle]||ANIMS.pop)(span,i));
-    setTimeout(()=>span.classList.add('letter-done'),i*100+700);
-  });
-  document.getElementById('stage-label').textContent=word+' • '+currentStyle;
-  const shareUrl=window.location.origin+window.location.pathname+'#animate/'+word+'/'+currentStyle;
-  document.getElementById('share-url-text').textContent=shareUrl;
-  document.getElementById('share-bar').classList.add('show');
-  history.replaceState(null,'','#animate/'+word+'/'+currentStyle);
-}
-
-function replayAnimation(){
-  if(currentWord){document.getElementById('word-input').value=currentWord;animateWord();}
-}
-
-function copyShareUrl(){
-  const url=document.getElementById('share-url-text').textContent;
-  navigator.clipboard.writeText(url).then(()=>{
-    const btn=document.getElementById('btn-copy');
-    btn.textContent='✓ Copied!';btn.classList.add('copied');
-    setTimeout(()=>{btn.textContent='Copy link';btn.classList.remove('copied');},2500);
-    showToast('Link copied! Share it with anyone ✦');
-  }).catch(()=>showToast('Select the link and copy manually'));
-}
-
-function showPublicView(word,style){
-  showView('public');
-  const container=document.getElementById('public-letters');
-  container.className='public-big-letters anim-'+(style||'pop');
-  container.innerHTML='';
-  word.split('').forEach((char,i)=>{
-    const span=document.createElement('span');
-    span.className='public-letter';
-    span.textContent=char;
-    span.style.color=COLORS[i%COLORS.length];
-    container.appendChild(span);
-    requestAnimationFrame(()=>(ANIMS[style]||ANIMS.pop)(span,i));
-    setTimeout(()=>span.classList.add('letter-done'),i*100+800);
-  });
-}
-
-function goHome(e){
-  e.preventDefault();
-  history.replaceState(null,'',window.location.pathname);
-  showView('animate');
-  document.getElementById('stage-letters').innerHTML='';
-  document.getElementById('stage-empty').style.display='';
-  document.getElementById('share-bar').classList.remove('show');
-  document.getElementById('word-input').value='';
-  document.getElementById('char-count').textContent='0/9';
-  currentWord='';
-}
-
-function showToast(msg){
-  const toast=document.getElementById('toast');
-  toast.textContent=msg;toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'),3000);
-}
 </script>
 </body>
 </html>
