@@ -1,1 +1,5 @@
-PLACEHOLDER_VERCEL
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
