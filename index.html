@@ -22,7 +22,7 @@
   --f-body:'Space Grotesk',system-ui,sans-serif;
   --ease:180ms cubic-bezier(.16,1,.3,1);
 }
-:root,[data-theme="light"]{
+:root,[data-theme="dark"]{
   --bg:#0d0b14;--surface:#13101e;--surface-2:#1a1628;
   --surface-off:#211c33;--border:oklch(.8 .05 290/.12);
   --text:#e8e0f8;--muted:#9b91b8;--faint:#504870;
@@ -47,7 +47,6 @@ body{min-height:100dvh;font-family:var(--f-body);font-size:var(--text-base);colo
 button{cursor:pointer;border:none;background:none;font:inherit;color:inherit;}
 input{font:inherit;color:inherit;}
 a{color:inherit;}
-/* BG CANVAS */
 #bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;}
 nav{
@@ -59,26 +58,19 @@ nav{
   border-bottom:1px solid var(--border);
 }
 .nav-logo{display:flex;align-items:center;gap:var(--sp2);font-family:var(--f-display);font-size:var(--text-lg);font-weight:700;letter-spacing:-.02em;}
-.nav-logo .p{color:var(--primary);} .nav-logo .c{color:var(--accent);}
+.nav-logo .p{color:var(--primary);}.nav-logo .c{color:var(--accent);}
 .btn-icon{width:36px;height:36px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--muted);border:1px solid var(--border);background:var(--surface);transition:all var(--ease);}
 .btn-icon:hover{color:var(--text);background:var(--surface-off);}
 .view{display:none;}
 .view.active{display:flex;}
-/* ANIMATE VIEW */
 #view-animate{flex:1;flex-direction:column;align-items:center;padding:var(--sp8) var(--sp4) var(--sp16);}
 .hero{text-align:center;max-width:600px;margin-bottom:var(--sp10);}
-.hero h1{font-size:var(--text-2xl);font-weight:700;line-height:1.1;margin-bottom:var(--sp3);
-  background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero h1{font-size:var(--text-2xl);font-weight:700;line-height:1.1;margin-bottom:var(--sp3);background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .hero p{color:var(--muted);font-size:var(--text-lg);}
 .card{width:100%;max-width:540px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-2xl);padding:var(--sp6);box-shadow:var(--sh-md);margin-bottom:var(--sp8);}
 .input-row{display:flex;gap:var(--sp3);align-items:stretch;}
 .word-field{flex:1;position:relative;}
-.word-field input{
-  width:100%;padding:var(--sp3) var(--sp4);border-radius:var(--r-md);border:1px solid var(--border);
-  background:var(--surface-2);color:var(--text);outline:none;transition:all var(--ease);
-  font-family:var(--f-display);font-size:var(--text-xl);text-align:center;
-  letter-spacing:.12em;text-transform:uppercase;padding-right:60px;
-}
+.word-field input{width:100%;padding:var(--sp3) var(--sp4);border-radius:var(--r-md);border:1px solid var(--border);background:var(--surface-2);color:var(--text);outline:none;transition:all var(--ease);font-family:var(--f-display);font-size:var(--text-xl);text-align:center;letter-spacing:.12em;text-transform:uppercase;padding-right:60px;}
 .word-field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px oklch(from var(--primary) l c h/.2);}
 .word-field input::placeholder{color:var(--faint);}
 .cc{position:absolute;right:var(--sp3);top:50%;transform:translateY(-50%);font-size:var(--text-xs);color:var(--faint);font-family:var(--f-display);}
@@ -88,7 +80,6 @@ nav{
 .chips{display:flex;gap:var(--sp2);flex-wrap:wrap;margin-top:var(--sp4);}
 .chip{padding:var(--sp1) var(--sp3);border-radius:var(--r-full);font-size:var(--text-xs);font-weight:600;border:1px solid var(--border);color:var(--muted);background:var(--surface-2);transition:all var(--ease);cursor:pointer;}
 .chip.active,.chip:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
-/* STAGE */
 .stage-wrap{width:100%;max-width:760px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-2xl);overflow:hidden;box-shadow:var(--sh-lg);}
 .stage-hd{display:flex;align-items:center;justify-content:space-between;padding:var(--sp4) var(--sp5);border-bottom:1px solid var(--border);background:var(--surface-2);}
 .stage-title{font-size:var(--text-sm);font-weight:600;color:var(--muted);}
@@ -96,28 +87,51 @@ nav{
 #three-canvas{width:100%;height:280px;display:block;cursor:grab;}
 #three-canvas:active{cursor:grabbing;}
 #canvas-placeholder{min-height:280px;display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);color:var(--faint);font-family:var(--f-display);background:radial-gradient(ellipse at center,var(--surface-off) 0%,var(--bg) 100%);}
-.share-bar{display:none;padding:var(--sp3) var(--sp5);border-top:1px solid var(--border);background:var(--surface);align-items:center;gap:var(--sp3);}
-.share-bar.show{display:flex;}
+/* SHARE BAR */
+.share-section{display:none;border-top:1px solid var(--border);background:var(--surface);}
+.share-section.show{display:block;}
+.share-link-row{display:flex;align-items:center;gap:var(--sp3);padding:var(--sp3) var(--sp5);border-bottom:1px solid var(--border);}
 .share-url{flex:1;font-family:var(--f-display);font-size:var(--text-xs);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:var(--surface-off);border-radius:var(--r-sm);padding:var(--sp2) var(--sp3);border:1px solid var(--border);}
 .btn-copy{padding:var(--sp2) var(--sp4);border-radius:var(--r-full);background:var(--accent);color:#0c1820;font-size:var(--text-xs);font-weight:700;transition:all var(--ease);white-space:nowrap;cursor:pointer;}
 .btn-copy:hover{opacity:.85;}
 .btn-copy.copied{background:#4ade80;}
+/* SOCIAL ROW */
+.social-row{display:flex;align-items:center;gap:var(--sp3);padding:var(--sp4) var(--sp5);flex-wrap:wrap;}
+.social-label{font-size:var(--text-xs);color:var(--faint);font-family:var(--f-display);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+.social-btns{display:flex;gap:var(--sp2);flex-wrap:wrap;}
+.s-btn{
+  display:inline-flex;align-items:center;gap:var(--sp2);
+  padding:var(--sp2) var(--sp4);border-radius:var(--r-full);
+  font-size:var(--text-xs);font-weight:700;
+  border:1px solid var(--border);background:var(--surface-2);
+  color:var(--text);transition:all var(--ease);cursor:pointer;
+  text-decoration:none;white-space:nowrap;
+}
+.s-btn:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
+.s-btn svg{flex-shrink:0;}
+.s-btn.x-btn:hover{background:#000;color:#fff;border-color:#000;}
+.s-btn.fb-btn:hover{background:#1877f2;color:#fff;border-color:#1877f2;}
+.s-btn.li-btn:hover{background:#0a66c2;color:#fff;border-color:#0a66c2;}
+.s-btn.ig-btn:hover{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border-color:transparent;}
 /* PUBLIC */
 #view-public{flex:1;flex-direction:column;align-items:center;justify-content:center;padding:var(--sp8) var(--sp4);}
 .pub-wrap{width:100%;max-width:900px;text-align:center;}
 .pub-label{font-size:var(--text-xs);color:var(--faint);font-family:var(--f-display);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--sp6);}
 #pub-canvas{width:100%;height:380px;display:block;border-radius:var(--r-2xl);border:1px solid var(--border);}
-.pub-try{margin-top:var(--sp8);font-size:var(--text-sm);color:var(--muted);}
+/* pub social share */
+.pub-social{margin-top:var(--sp6);display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:var(--sp3);}
+.pub-social .social-label{font-size:var(--text-xs);color:var(--faint);font-family:var(--f-display);text-transform:uppercase;letter-spacing:.08em;}
+.pub-try{margin-top:var(--sp6);font-size:var(--text-sm);color:var(--muted);}
 .pub-try a{color:var(--primary);text-decoration:none;font-weight:600;}
 .pub-try a:hover{text-decoration:underline;}
-/* TOAST */
 .toast{position:fixed;bottom:var(--sp6);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);padding:var(--sp2) var(--sp6);font-size:var(--text-sm);font-weight:500;box-shadow:var(--sh-md);z-index:999;opacity:0;transition:all .3s ease;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 @media(max-width:600px){
   nav{padding:var(--sp3) var(--sp4);}
   .input-row{flex-direction:column;}
   #three-canvas{height:220px;}
-  #pub-canvas{height:280px;}
+  #pub-canvas{height:260px;}
+  .social-row{flex-direction:column;align-items:flex-start;gap:var(--sp2);}
 }
 </style>
 </head>
@@ -175,9 +189,40 @@ nav{
     </div>
     <div id="canvas-placeholder">Type a word above ↑</div>
     <canvas id="three-canvas" style="display:none;"></canvas>
-    <div class="share-bar" id="share-bar">
-      <span class="share-url" id="share-url-text"></span>
-      <button class="btn-copy" id="btn-copy" onclick="copyShareUrl()">Copy link</button>
+
+    <!-- SHARE SECTION -->
+    <div class="share-section" id="share-section">
+      <!-- Link row -->
+      <div class="share-link-row">
+        <span class="share-url" id="share-url-text"></span>
+        <button class="btn-copy" id="btn-copy" onclick="copyShareUrl()">Copy link</button>
+      </div>
+      <!-- Social row -->
+      <div class="social-row">
+        <span class="social-label">Share as reel:</span>
+        <div class="social-btns">
+          <!-- X / Twitter -->
+          <a id="share-x" href="#" target="_blank" rel="noopener noreferrer" class="s-btn x-btn" aria-label="Share on X">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.261 5.636zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Post on X
+          </a>
+          <!-- Facebook -->
+          <a id="share-fb" href="#" target="_blank" rel="noopener noreferrer" class="s-btn fb-btn" aria-label="Share on Facebook">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </a>
+          <!-- LinkedIn -->
+          <a id="share-li" href="#" target="_blank" rel="noopener noreferrer" class="s-btn li-btn" aria-label="Share on LinkedIn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+          <!-- Instagram (copy for reel) -->
+          <button id="share-ig" onclick="copyForInstagram()" class="s-btn ig-btn" aria-label="Copy for Instagram Reel">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            Copy for Reel
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -186,6 +231,25 @@ nav{
   <div class="pub-wrap">
     <div class="pub-label">✦ ShivAnimate — Someone shared this with you</div>
     <canvas id="pub-canvas"></canvas>
+    <div class="pub-social" id="pub-social">
+      <span class="social-label">Share this:</span>
+      <a id="pub-share-x" href="#" target="_blank" rel="noopener noreferrer" class="s-btn x-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.261 5.636zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X
+      </a>
+      <a id="pub-share-fb" href="#" target="_blank" rel="noopener noreferrer" class="s-btn fb-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Facebook
+      </a>
+      <a id="pub-share-li" href="#" target="_blank" rel="noopener noreferrer" class="s-btn li-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <button id="pub-share-ig" onclick="copyForInstagramPub()" class="s-btn ig-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        Copy for Reel
+      </button>
+    </div>
     <div class="pub-try">Animate your own word — <a href="#" onclick="goHome(event)">Try ShivAnimate →</a></div>
   </div>
 </div>
@@ -208,398 +272,312 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-// ─── STATE ──────────────────────────────────────────────────────────────────
-let currentWord = '', currentStyle = 'pop';
+let currentWord='', currentStyle='pop';
 let threeScene, threeCamera, threeRenderer, threeComposer;
-let letterMeshes = [], animClock, animating = false;
-let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
-let loadedFont = null;
-const FONT_URL = 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json';
+let letterMeshes=[], animating=false;
+let mouseX=0, mouseY=0, targetX=0, targetY=0;
+let loadedFont=null;
+const FONT_URL='https://threejs.org/examples/fonts/helvetiker_bold.typeface.json';
+const STYLE_COLORS={pop:['#a78bfa','#22d3ee'],wave:['#22d3ee','#4ade80'],glitch:['#f87171','#fbbf24'],fire:['#fb923c','#fbbf24'],spin:['#60a5fa','#c084fc'],rainbow:['#f87171','#c084fc']};
+const RAINBOW=['#f87171','#fb923c','#facc15','#4ade80','#60a5fa','#c084fc','#f472b6'];
 
-// Style palette: [primary hex, secondary hex]
-const STYLE_COLORS = {
-  pop:     ['#a78bfa','#22d3ee'],
-  wave:    ['#22d3ee','#4ade80'],
-  glitch:  ['#f87171','#fbbf24'],
-  fire:    ['#fb923c','#fbbf24'],
-  spin:    ['#60a5fa','#c084fc'],
-  rainbow: ['#f87171','#c084fc']
-};
-const RAINBOW = ['#f87171','#fb923c','#facc15','#4ade80','#60a5fa','#c084fc','#f472b6'];
-
-// ─── THEME ──────────────────────────────────────────────────────────────────
-let darkMode = true;
-const themeBtn = document.getElementById('theme-btn');
-themeBtn.addEventListener('click', () => {
-  darkMode = !darkMode;
-  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-  themeBtn.innerHTML = darkMode
-    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
-    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
-  if (threeRenderer) threeRenderer.setClearColor(darkMode ? 0x0d0b14 : 0xf0edf8);
-  if (bgRenderer) bgRenderer.setClearColor(darkMode ? 0x0d0b14 : 0xf0edf8);
+// ── THEME ──
+let darkMode=true;
+document.getElementById('theme-btn').addEventListener('click',()=>{
+  darkMode=!darkMode;
+  document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');
+  document.getElementById('theme-btn').innerHTML=darkMode
+    ?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+    :'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  if(threeRenderer) threeRenderer.setClearColor(darkMode?0x0d0b14:0xf0edf8);
+  if(bgRenderer) bgRenderer.setClearColor(darkMode?0x0d0b14:0xf0edf8);
 });
 
-// ─── INPUT ───────────────────────────────────────────────────────────────────
-window.onWordInput = () => {
-  const inp = document.getElementById('word-input');
-  const v = inp.value.replace(/[^a-zA-Z0-9]/g,'').slice(0,9);
-  inp.value = v;
-  const cc = document.getElementById('cc');
-  cc.textContent = v.length + '/9';
-  cc.className = 'cc' + (v.length >= 9 ? ' warn' : '');
+// ── INPUT ──
+window.onWordInput=()=>{
+  const inp=document.getElementById('word-input');
+  const v=inp.value.replace(/[^a-zA-Z0-9]/g,'').slice(0,9);
+  inp.value=v;
+  const cc=document.getElementById('cc');
+  cc.textContent=v.length+'/9';
+  cc.className='cc'+(v.length>=9?' warn':'');
+};
+window.selectStyle=(el,style)=>{
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); currentStyle=style;
+  if(currentWord) animateWord();
+};
+window.replayAnimation=()=>{ if(currentWord){document.getElementById('word-input').value=currentWord; animateWord();} };
+window.showView=(name)=>{
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
 };
 
-window.selectStyle = (el, style) => {
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  currentStyle = style;
-  if (currentWord) animateWord();
-};
-
-window.replayAnimation = () => { if (currentWord) { document.getElementById('word-input').value = currentWord; animateWord(); } };
-
-// ─── ROUTE ───────────────────────────────────────────────────────────────────
-window.showView = (name) => {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + name).classList.add('active');
-};
-
-// ─── BACKGROUND PARTICLE SCENE ───────────────────────────────────────────────
-let bgRenderer, bgScene, bgCamera, bgParticles;
-(function initBg() {
-  const canvas = document.getElementById('bg-canvas');
-  bgRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
-  bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-  bgRenderer.setClearColor(0x0d0b14, 1);
-  bgScene = new THREE.Scene();
-  bgCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  bgCamera.position.z = 5;
-  const geo = new THREE.BufferGeometry();
-  const N = 1800;
-  const pos = new Float32Array(N * 3);
-  const col = new Float32Array(N * 3);
-  for (let i = 0; i < N; i++) {
-    pos[i*3]   = (Math.random()-0.5)*30;
-    pos[i*3+1] = (Math.random()-0.5)*30;
-    pos[i*3+2] = (Math.random()-0.5)*20;
-    const c = new THREE.Color();
-    c.setHSL(Math.random() * 0.2 + 0.7, 0.9, 0.7);
-    col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
-  }
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  const mat = new THREE.PointsMaterial({ size: 0.055, vertexColors: true, transparent: true, opacity: 0.7 });
-  bgParticles = new THREE.Points(geo, mat);
-  bgScene.add(bgParticles);
-  function resizeBg() {
-    bgRenderer.setSize(window.innerWidth, window.innerHeight);
-    bgCamera.aspect = window.innerWidth / window.innerHeight;
-    bgCamera.updateProjectionMatrix();
-  }
-  resizeBg();
-  window.addEventListener('resize', resizeBg);
-  function loopBg(t) {
-    requestAnimationFrame(loopBg);
-    bgParticles.rotation.y = t * 0.00008;
-    bgParticles.rotation.x = t * 0.00003;
-    bgRenderer.render(bgScene, bgCamera);
-  }
-  requestAnimationFrame(loopBg);
-})();
-
-// ─── MOUSE PARALLAX ──────────────────────────────────────────────────────────
-window.addEventListener('mousemove', e => {
-  mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
-  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-});
-
-// ─── LOAD FONT ───────────────────────────────────────────────────────────────
-const fontLoader = new FontLoader();
-fontLoader.load(FONT_URL, font => { loadedFont = font; });
-
-// ─── INIT STAGE SCENE ────────────────────────────────────────────────────────
-function initStageScene(canvas) {
-  if (threeRenderer) { threeRenderer.dispose(); }
-  const W = canvas.clientWidth, H = canvas.clientHeight;
-  threeRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  threeRenderer.setSize(W, H);
-  threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-  threeRenderer.toneMappingExposure = 1.2;
-  threeRenderer.setClearColor(0x0d0b14, 1);
-  threeScene = new THREE.Scene();
-  threeCamera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
-  threeCamera.position.set(0, 0, 14);
-  // Lights
-  threeScene.add(new THREE.AmbientLight(0xffffff, 0.4));
-  const dL = new THREE.DirectionalLight(0xffffff, 1.5);
-  dL.position.set(5, 10, 8);
-  threeScene.add(dL);
-  const pL1 = new THREE.PointLight(0xa78bfa, 4, 30);
-  pL1.position.set(-6, 4, 6);
-  threeScene.add(pL1);
-  const pL2 = new THREE.PointLight(0x22d3ee, 4, 30);
-  pL2.position.set(6, -4, 6);
-  threeScene.add(pL2);
-  // Bloom
-  threeComposer = new EffectComposer(threeRenderer);
-  threeComposer.addPass(new RenderPass(threeScene, threeCamera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.7, 0.5, 0.2);
-  threeComposer.addPass(bloom);
-  // Grid floor
-  const grid = new THREE.GridHelper(40, 30, 0x333355, 0x222244);
-  grid.position.y = -3.5;
-  threeScene.add(grid);
-  // Resize
-  const ro = new ResizeObserver(() => {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    threeRenderer.setSize(w, h);
-    threeCamera.aspect = w / h;
-    threeCamera.updateProjectionMatrix();
-    threeComposer.setSize(w, h);
-  });
-  ro.observe(canvas);
+// ── SOCIAL SHARE HELPERS ──
+function buildShareUrl(word, style) {
+  return location.origin + location.pathname + '#animate/' + word + '/' + style;
+}
+function buildShareLinks(url, word) {
+  const text = encodeURIComponent('Check out my animated word "' + word + '" in 3D! ✨ Made with ShivAnimate');
+  const enc  = encodeURIComponent(url);
+  return {
+    x:  'https://twitter.com/intent/tweet?text=' + text + '&url=' + enc,
+    fb: 'https://www.facebook.com/sharer/sharer.php?u=' + enc,
+    li: 'https://www.linkedin.com/sharing/share-offsite/?url=' + enc
+  };
+}
+function setShareLinks(url, word) {
+  const links = buildShareLinks(url, word);
+  document.getElementById('share-x').href  = links.x;
+  document.getElementById('share-fb').href = links.fb;
+  document.getElementById('share-li').href = links.li;
+}
+function setPubShareLinks(url, word) {
+  const links = buildShareLinks(url, word);
+  document.getElementById('pub-share-x').href  = links.x;
+  document.getElementById('pub-share-fb').href = links.fb;
+  document.getElementById('pub-share-li').href = links.li;
 }
 
-// ─── BUILD LETTERS ──────────────────────────────────────────────────────────
-function buildLetters(word, style, scene) {
-  const colors = STYLE_COLORS[style] || STYLE_COLORS.pop;
-  const meshes = [];
-  const totalChars = word.length;
-  // estimate total width first (rough)
-  const estimatedW = totalChars * 1.6;
-  const startX = -estimatedW / 2 + 0.8;
-  word.split('').forEach((char, i) => {
-    const hexColor = style === 'rainbow'
-      ? RAINBOW[i % RAINBOW.length]
-      : (i % 2 === 0 ? colors[0] : colors[1]);
-    const geo = new TextGeometry(char, {
-      font: loadedFont,
-      size: 1.8,
-      depth: 0.45,
-      curveSegments: 8,
-      bevelEnabled: true,
-      bevelThickness: 0.08,
-      bevelSize: 0.04,
-      bevelSegments: 4
-    });
+window.copyShareUrl=()=>{
+  const url=document.getElementById('share-url-text').textContent;
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn=document.getElementById('btn-copy');
+    btn.textContent='✓ Copied!'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy link';btn.classList.remove('copied');},2500);
+    showToast('Link copied! ✦');
+  }).catch(()=>showToast('Select the link and copy manually'));
+};
+
+window.copyForInstagram=()=>{
+  const url=document.getElementById('share-url-text').textContent;
+  const caption='✨ I just animated "' + currentWord + '" in 3D! Check it out → ' + url + ' \n\n#ShivAnimate #3D #Animation #WordArt #Reel';
+  navigator.clipboard.writeText(caption).then(()=>{
+    showToast('📱 Caption + link copied! Paste into your Instagram Reel caption.');
+    document.getElementById('share-ig').textContent=''; 
+    document.getElementById('share-ig').innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg> ✓ Copied!';
+    setTimeout(()=>{ document.getElementById('share-ig').innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg> Copy for Reel';},3000);
+  }).catch(()=>showToast('Copy manually: '+caption));
+};
+
+window.copyForInstagramPub=()=>{
+  const url=document.getElementById('pub-share-ig').dataset.url||location.href;
+  const word=document.getElementById('pub-share-ig').dataset.word||'';
+  const caption='✨ Someone animated "'+word+'" in 3D for me! Check it out → '+url+'\n\n#ShivAnimate #3D #Animation #WordArt #Reel';
+  navigator.clipboard.writeText(caption).then(()=>showToast('📱 Caption + link copied! Paste into your Instagram Reel caption.')).catch(()=>showToast('Copy manually: '+caption));
+};
+
+// ── BACKGROUND PARTICLES ──
+let bgRenderer, bgScene, bgCamera, bgParticles;
+(function initBg(){
+  const canvas=document.getElementById('bg-canvas');
+  bgRenderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:false});
+  bgRenderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  bgRenderer.setClearColor(0x0d0b14,1);
+  bgScene=new THREE.Scene();
+  bgCamera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
+  bgCamera.position.z=5;
+  const geo=new THREE.BufferGeometry();
+  const N=1800,pos=new Float32Array(N*3),col=new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    pos[i*3]=(Math.random()-.5)*30; pos[i*3+1]=(Math.random()-.5)*30; pos[i*3+2]=(Math.random()-.5)*20;
+    const c=new THREE.Color(); c.setHSL(Math.random()*.2+.7,.9,.7);
+    col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b;
+  }
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  bgParticles=new THREE.Points(geo,new THREE.PointsMaterial({size:.055,vertexColors:true,transparent:true,opacity:.7}));
+  bgScene.add(bgParticles);
+  function r(){bgRenderer.setSize(innerWidth,innerHeight);bgCamera.aspect=innerWidth/innerHeight;bgCamera.updateProjectionMatrix();}
+  r(); window.addEventListener('resize',r);
+  (function loop(t){requestAnimationFrame(loop);bgParticles.rotation.y=t*.00008;bgParticles.rotation.x=t*.00003;bgRenderer.render(bgScene,bgCamera);})();
+})();
+
+window.addEventListener('mousemove',e=>{mouseX=(e.clientX/innerWidth-.5)*2;mouseY=(e.clientY/innerHeight-.5)*2;});
+
+// ── FONT ──
+const fontLoader=new FontLoader();
+fontLoader.load(FONT_URL,f=>{loadedFont=f;});
+
+// ── STAGE SCENE ──
+function initStageScene(canvas){
+  if(threeRenderer) threeRenderer.dispose();
+  const W=canvas.clientWidth,H=canvas.clientHeight;
+  threeRenderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  threeRenderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  threeRenderer.setSize(W,H);
+  threeRenderer.toneMapping=THREE.ACESFilmicToneMapping;
+  threeRenderer.toneMappingExposure=1.2;
+  threeRenderer.setClearColor(0x0d0b14,1);
+  threeScene=new THREE.Scene();
+  threeCamera=new THREE.PerspectiveCamera(50,W/H,0.1,100);
+  threeCamera.position.set(0,0,14);
+  threeScene.add(new THREE.AmbientLight(0xffffff,.4));
+  const dL=new THREE.DirectionalLight(0xffffff,1.5); dL.position.set(5,10,8); threeScene.add(dL);
+  const pL1=new THREE.PointLight(0xa78bfa,4,30); pL1.position.set(-6,4,6); threeScene.add(pL1);
+  const pL2=new THREE.PointLight(0x22d3ee,4,30); pL2.position.set(6,-4,6); threeScene.add(pL2);
+  threeComposer=new EffectComposer(threeRenderer);
+  threeComposer.addPass(new RenderPass(threeScene,threeCamera));
+  threeComposer.addPass(new UnrealBloomPass(new THREE.Vector2(W,H),.7,.5,.2));
+  const grid=new THREE.GridHelper(40,30,0x333355,0x222244); grid.position.y=-3.5; threeScene.add(grid);
+  new ResizeObserver(()=>{
+    const w=canvas.clientWidth,h=canvas.clientHeight;
+    threeRenderer.setSize(w,h); threeCamera.aspect=w/h; threeCamera.updateProjectionMatrix(); threeComposer.setSize(w,h);
+  }).observe(canvas);
+}
+
+function buildLetters(word,style,scene){
+  const colors=STYLE_COLORS[style]||STYLE_COLORS.pop;
+  const meshes=[];
+  const startX=-word.length*1.6/2+0.8;
+  word.split('').forEach((char,i)=>{
+    const hexColor=style==='rainbow'?RAINBOW[i%RAINBOW.length]:(i%2===0?colors[0]:colors[1]);
+    const geo=new TextGeometry(char,{font:loadedFont,size:1.8,depth:.45,curveSegments:8,bevelEnabled:true,bevelThickness:.08,bevelSize:.04,bevelSegments:4});
     geo.computeBoundingBox();
-    const w = geo.boundingBox.max.x - geo.boundingBox.min.x;
-    const matColor = new THREE.Color(hexColor);
-    const mat = new THREE.MeshStandardMaterial({
-      color: matColor,
-      emissive: matColor,
-      emissiveIntensity: style === 'glitch' ? 0.8 : 0.3,
-      metalness: style === 'spin' ? 0.9 : 0.3,
-      roughness: style === 'spin' ? 0.1 : 0.4,
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.x = startX + i * 1.9 - w / 2;
-    mesh.position.y = 0;
-    mesh.position.z = 0;
-    mesh.userData = { i, style, ox: mesh.position.x, oy: 0, phase: i * 0.6, startTime: null, entryDone: false };
-    scene.add(mesh);
-    meshes.push(mesh);
+    const w=geo.boundingBox.max.x-geo.boundingBox.min.x;
+    const mc=new THREE.Color(hexColor);
+    const mat=new THREE.MeshStandardMaterial({color:mc,emissive:mc,emissiveIntensity:style==='glitch'?.8:.3,metalness:style==='spin'?.9:.3,roughness:style==='spin'?.1:.4});
+    const mesh=new THREE.Mesh(geo,mat);
+    mesh.position.x=startX+i*1.9-w/2;
+    mesh.userData={i,style,ox:mesh.position.x,oy:0,phase:i*.6,startTime:null};
+    scene.add(mesh); meshes.push(mesh);
   });
   return meshes;
 }
 
-// ─── ANIMATE WORD ────────────────────────────────────────────────────────────
-window.animateWord = async () => {
-  const inp = document.getElementById('word-input');
-  const word = inp.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9);
-  if (!word) { showToast('Type a word first!'); return; }
-  if (!loadedFont) { showToast('Font loading… try again in a second!'); return; }
-  currentWord = word;
-  document.getElementById('canvas-placeholder').style.display = 'none';
-  const canvas = document.getElementById('three-canvas');
-  canvas.style.display = 'block';
+window.animateWord=async()=>{
+  const inp=document.getElementById('word-input');
+  const word=inp.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9);
+  if(!word){showToast('Type a word first!');return;}
+  if(!loadedFont){showToast('Font loading… try again!');return;}
+  currentWord=word;
+  document.getElementById('canvas-placeholder').style.display='none';
+  const canvas=document.getElementById('three-canvas');
+  canvas.style.display='block';
   initStageScene(canvas);
-  // clear old meshes
-  letterMeshes.forEach(m => { m.geometry.dispose(); m.material.dispose(); threeScene.remove(m); });
-  letterMeshes = buildLetters(word, currentStyle, threeScene);
-  document.getElementById('stage-label').textContent = word + '  •  ' + currentStyle + '  •  3D';
-  const shareUrl = location.origin + location.pathname + '#animate/' + word + '/' + currentStyle;
-  document.getElementById('share-url-text').textContent = shareUrl;
-  document.getElementById('share-bar').classList.add('show');
-  history.replaceState(null, '', '#animate/' + word + '/' + currentStyle);
-  if (!animating) startLoop(canvas);
+  letterMeshes.forEach(m=>{m.geometry.dispose();m.material.dispose();threeScene.remove(m);});
+  letterMeshes=buildLetters(word,currentStyle,threeScene);
+  document.getElementById('stage-label').textContent=word+' • '+currentStyle+' • 3D';
+  const shareUrl=buildShareUrl(word,currentStyle);
+  document.getElementById('share-url-text').textContent=shareUrl;
+  document.getElementById('share-section').classList.add('show');
+  setShareLinks(shareUrl,word);
+  history.replaceState(null,'','#animate/'+word+'/'+currentStyle);
+  if(!animating) startLoop(canvas);
 };
 
-// ─── RENDER LOOP ──────────────────────────────────────────────────────────────
-function startLoop(canvas) {
-  animating = true;
-  const clock = new THREE.Clock();
-  let drag = false, lastX = 0, cameraYaw = 0;
-  canvas.addEventListener('mousedown', e => { drag = true; lastX = e.clientX; });
-  window.addEventListener('mouseup', () => { drag = false; });
-  canvas.addEventListener('mousemove', e => {
-    if (drag) {
-      cameraYaw += (e.clientX - lastX) * 0.005;
-      lastX = e.clientX;
-    }
-  });
-  canvas.addEventListener('touchstart', e => { drag = true; lastX = e.touches[0].clientX; }, {passive:true});
-  canvas.addEventListener('touchend', () => { drag = false; }, {passive:true});
-  canvas.addEventListener('touchmove', e => {
-    if (drag) { cameraYaw += (e.touches[0].clientX - lastX) * 0.005; lastX = e.touches[0].clientX; }
-  }, {passive:true});
-  function loop() {
-    if (!animating) return;
+function startLoop(canvas){
+  animating=true;
+  const clock=new THREE.Clock();
+  let drag=false,lastX=0,cameraYaw=0;
+  canvas.addEventListener('mousedown',e=>{drag=true;lastX=e.clientX;});
+  window.addEventListener('mouseup',()=>{drag=false;});
+  canvas.addEventListener('mousemove',e=>{if(drag){cameraYaw+=(e.clientX-lastX)*.005;lastX=e.clientX;}});
+  canvas.addEventListener('touchstart',e=>{drag=true;lastX=e.touches[0].clientX;},{passive:true});
+  canvas.addEventListener('touchend',()=>{drag=false;},{passive:true});
+  canvas.addEventListener('touchmove',e=>{if(drag){cameraYaw+=(e.touches[0].clientX-lastX)*.005;lastX=e.touches[0].clientX;}},{passive:true});
+  (function loop(){
+    if(!animating) return;
     requestAnimationFrame(loop);
-    const t = clock.getElapsedTime();
-    // Parallax / auto-rotate
-    targetX += (mouseX * 0.3 - targetX) * 0.05;
-    targetY += (-mouseY * 0.2 - targetY) * 0.05;
-    threeCamera.position.x = Math.sin(cameraYaw) * 14 + targetX * 2;
-    threeCamera.position.z = Math.cos(cameraYaw) * 14;
-    threeCamera.position.y = targetY * 2;
-    threeCamera.lookAt(0, 0, 0);
-    // Per-letter animation
-    letterMeshes.forEach(m => {
-      const d = m.userData;
-      if (!d.startTime) d.startTime = t;
-      const lt = t - d.startTime;
-      const entry = Math.min(lt / 0.6, 1);
-      const eased = 1 - Math.pow(1 - entry, 4);
-      switch (d.style) {
-        case 'pop':
-          m.scale.setScalar(eased < 1 ? eased * 1.1 : 1 + Math.sin(t * 2 + d.phase) * 0.04);
-          m.position.y = d.oy + (1 - eased) * 5 + Math.sin(t * 1.5 + d.phase) * 0.08;
-          break;
-        case 'wave':
-          m.position.y = d.oy + Math.sin(t * 2 + d.i * 0.8) * 0.5 + (1 - eased) * 4;
-          m.rotation.z = Math.sin(t * 1.5 + d.i * 0.6) * 0.12;
-          break;
-        case 'glitch':
-          const g = Math.random();
-          m.position.x = d.ox + (g < 0.02 ? (Math.random() - 0.5) * 0.8 : 0);
-          m.position.y = d.oy + (1 - eased) * 6 + (g < 0.02 ? (Math.random() - 0.5) * 0.4 : 0);
-          m.material.emissiveIntensity = 0.5 + Math.sin(t * 20 + d.i) * 0.3;
-          break;
-        case 'fire':
-          m.position.y = d.oy + Math.sin(t * 3 + d.i * 0.9) * 0.12 + (1 - eased) * 6;
-          m.scale.y = eased < 1 ? eased : 1 + Math.sin(t * 4 + d.i) * 0.03;
-          m.scale.x = eased < 1 ? eased : 1;
-          break;
-        case 'spin':
-          m.rotation.y = (1 - eased) * Math.PI * 2 + t * 0.4 + d.i * 0.3;
-          m.position.y = d.oy + (1 - eased) * 5;
-          break;
-        case 'rainbow':
-          const hue = (t * 0.4 + d.i * 0.15) % 1;
-          m.material.color.setHSL(hue, 1, 0.6);
-          m.material.emissive.setHSL(hue, 1, 0.4);
-          m.position.y = d.oy + Math.sin(t * 2.5 + d.i * 0.7) * 0.35 + (1 - eased) * 4;
-          break;
+    const t=clock.getElapsedTime();
+    targetX+=(mouseX*.3-targetX)*.05;
+    targetY+=(-mouseY*.2-targetY)*.05;
+    threeCamera.position.x=Math.sin(cameraYaw)*14+targetX*2;
+    threeCamera.position.z=Math.cos(cameraYaw)*14;
+    threeCamera.position.y=targetY*2;
+    threeCamera.lookAt(0,0,0);
+    letterMeshes.forEach(m=>{
+      const d=m.userData;
+      if(!d.startTime) d.startTime=t;
+      const lt=t-d.startTime;
+      const entry=Math.min(lt/.6,1);
+      const eased=1-Math.pow(1-entry,4);
+      switch(d.style){
+        case 'pop': m.scale.setScalar(eased<1?eased*1.1:1+Math.sin(t*2+d.phase)*.04); m.position.y=d.oy+(1-eased)*5+Math.sin(t*1.5+d.phase)*.08; break;
+        case 'wave': m.position.y=d.oy+Math.sin(t*2+d.i*.8)*.5+(1-eased)*4; m.rotation.z=Math.sin(t*1.5+d.i*.6)*.12; break;
+        case 'glitch': { const g=Math.random(); m.position.x=d.ox+(g<.02?(Math.random()-.5)*.8:0); m.position.y=d.oy+(1-eased)*6+(g<.02?(Math.random()-.5)*.4:0); m.material.emissiveIntensity=.5+Math.sin(t*20+d.i)*.3; break; }
+        case 'fire': m.position.y=d.oy+Math.sin(t*3+d.i*.9)*.12+(1-eased)*6; m.scale.y=eased<1?eased:1+Math.sin(t*4+d.i)*.03; m.scale.x=eased<1?eased:1; break;
+        case 'spin': m.rotation.y=(1-eased)*Math.PI*2+t*.4+d.i*.3; m.position.y=d.oy+(1-eased)*5; break;
+        case 'rainbow': { const hue=(t*.4+d.i*.15)%1; m.material.color.setHSL(hue,1,.6); m.material.emissive.setHSL(hue,1,.4); m.position.y=d.oy+Math.sin(t*2.5+d.i*.7)*.35+(1-eased)*4; break; }
       }
     });
     threeComposer.render();
-  }
-  loop();
+  })();
 }
 
-// ─── PUBLIC VIEW ──────────────────────────────────────────────────────────────
-window.showPublicView = async (word, style) => {
+// ── PUBLIC VIEW ──
+window.showPublicView=async(word,style)=>{
   showView('public');
-  if (!loadedFont) {
-    await new Promise(res => {
-      const check = setInterval(() => { if (loadedFont) { clearInterval(check); res(); } }, 100);
-    });
-  }
-  const canvas = document.getElementById('pub-canvas');
-  const W = canvas.clientWidth, H = canvas.clientHeight || 380;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.setSize(W, H);
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.3;
-  renderer.setClearColor(0x0d0b14, 1);
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
-  camera.position.set(0, 0, 14);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-  const dL = new THREE.DirectionalLight(0xffffff, 1.5); dL.position.set(5, 10, 8); scene.add(dL);
-  const pL1 = new THREE.PointLight(0xa78bfa, 5, 30); pL1.position.set(-6, 4, 6); scene.add(pL1);
-  const pL2 = new THREE.PointLight(0x22d3ee, 5, 30); pL2.position.set(6, -4, 6); scene.add(pL2);
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), 1.0, 0.6, 0.15));
-  const grid = new THREE.GridHelper(40, 30, 0x333355, 0x222244); grid.position.y = -3.5; scene.add(grid);
-  const meshes = buildLetters(word.toUpperCase(), style, scene);
-  const clock2 = new THREE.Clock();
-  let pubMX = 0, pubMY = 0, pubTX = 0, pubTY = 0;
-  window.addEventListener('mousemove', e => { pubMX = (e.clientX/innerWidth-.5)*2; pubMY = (e.clientY/innerHeight-.5)*2; });
-  function pubLoop() {
+  if(!loadedFont) await new Promise(res=>{const c=setInterval(()=>{if(loadedFont){clearInterval(c);res();}},100);});
+  const canvas=document.getElementById('pub-canvas');
+  const W=canvas.clientWidth,H=canvas.clientHeight||380;
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(W,H);
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.3;
+  renderer.setClearColor(0x0d0b14,1);
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(50,W/H,.1,100);
+  camera.position.set(0,0,14);
+  scene.add(new THREE.AmbientLight(0xffffff,.4));
+  const dL=new THREE.DirectionalLight(0xffffff,1.5); dL.position.set(5,10,8); scene.add(dL);
+  scene.add(Object.assign(new THREE.PointLight(0xa78bfa,5,30),{position:{x:-6,y:4,z:6}}));
+  scene.add(Object.assign(new THREE.PointLight(0x22d3ee,5,30),{position:{x:6,y:-4,z:6}}));
+  const composer=new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene,camera));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(W,H),1.0,.6,.15));
+  const grid=new THREE.GridHelper(40,30,0x333355,0x222244); grid.position.y=-3.5; scene.add(grid);
+  const meshes=buildLetters(word.toUpperCase(),style,scene);
+  // set pub share links
+  const shareUrl=buildShareUrl(word.toUpperCase(),style);
+  setPubShareLinks(shareUrl,word.toUpperCase());
+  const ig=document.getElementById('pub-share-ig');
+  ig.dataset.url=shareUrl; ig.dataset.word=word.toUpperCase();
+  const clock2=new THREE.Clock();
+  let pmx=0,pmy=0,ptx=0,pty=0;
+  window.addEventListener('mousemove',e=>{pmx=(e.clientX/innerWidth-.5)*2;pmy=(e.clientY/innerHeight-.5)*2;});
+  (function pubLoop(){
     requestAnimationFrame(pubLoop);
-    const t = clock2.getElapsedTime();
-    pubTX += (pubMX * 0.3 - pubTX) * 0.05;
-    pubTY += (-pubMY * 0.2 - pubTY) * 0.05;
-    camera.position.x = pubTX * 2;
-    camera.position.y = pubTY * 2;
-    camera.lookAt(0, 0, 0);
-    meshes.forEach(m => {
-      const d = m.userData;
-      if (!d.startTime) d.startTime = t;
-      const lt = t - d.startTime;
-      const entry = Math.min(lt / 0.7, 1);
-      const eased = 1 - Math.pow(1 - entry, 4);
-      m.position.y = d.oy + (1 - eased) * 6 + Math.sin(t * 1.6 + d.phase) * 0.18;
-      m.scale.setScalar(eased < 1 ? eased * 1.05 : 1 + Math.sin(t * 2 + d.phase) * 0.04);
-      if (style === 'spin') m.rotation.y = (1 - eased) * Math.PI * 2 + t * 0.5 + d.i * 0.35;
-      if (style === 'rainbow') {
-        const hue = (t * 0.4 + d.i * 0.15) % 1;
-        m.material.color.setHSL(hue, 1, 0.6);
-        m.material.emissive.setHSL(hue, 1, 0.4);
-      }
+    const t=clock2.getElapsedTime();
+    ptx+=(pmx*.3-ptx)*.05; pty+=(-pmy*.2-pty)*.05;
+    camera.position.x=ptx*2; camera.position.y=pty*2; camera.lookAt(0,0,0);
+    meshes.forEach(m=>{
+      const d=m.userData;
+      if(!d.startTime) d.startTime=t;
+      const lt=t-d.startTime,entry=Math.min(lt/.7,1),eased=1-Math.pow(1-entry,4);
+      m.position.y=d.oy+(1-eased)*6+Math.sin(t*1.6+d.phase)*.18;
+      m.scale.setScalar(eased<1?eased*1.05:1+Math.sin(t*2+d.phase)*.04);
+      if(style==='spin') m.rotation.y=(1-eased)*Math.PI*2+t*.5+d.i*.35;
+      if(style==='rainbow'){const hue=(t*.4+d.i*.15)%1;m.material.color.setHSL(hue,1,.6);m.material.emissive.setHSL(hue,1,.4);}
     });
     composer.render();
-  }
-  pubLoop();
+  })();
 };
 
-// ─── SHARE ────────────────────────────────────────────────────────────────────
-window.copyShareUrl = () => {
-  const url = document.getElementById('share-url-text').textContent;
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = document.getElementById('btn-copy');
-    btn.textContent = '✓ Copied!'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy link'; btn.classList.remove('copied'); }, 2500);
-    showToast('Link copied! Share it with anyone ✦');
-  }).catch(() => showToast('Select the link and copy manually'));
-};
-
-window.goHome = (e) => {
+window.goHome=(e)=>{
   e.preventDefault();
-  history.replaceState(null, '', location.pathname);
+  history.replaceState(null,'',location.pathname);
   showView('animate');
-  currentWord = '';
-  document.getElementById('word-input').value = '';
-  document.getElementById('cc').textContent = '0/9';
-  animating = false;
+  currentWord=''; document.getElementById('word-input').value='';
+  document.getElementById('cc').textContent='0/9';
+  animating=false;
 };
 
-window.showToast = (msg) => {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+window.showToast=(msg)=>{
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
 };
 
-// ─── INIT ROUTE ───────────────────────────────────────────────────────────────
-(function() {
-  const hash = location.hash;
-  if (hash.startsWith('#animate/')) {
-    const p = hash.split('/');
-    const word = (p[1] || '').toUpperCase().slice(0, 9);
-    const style = p[2] || 'pop';
-    if (word) {
-      // wait for font
-      const wait = setInterval(() => {
-        if (loadedFont) { clearInterval(wait); showPublicView(word, style); }
-      }, 100);
-      return;
-    }
+// ── ROUTE ──
+(function(){
+  const hash=location.hash;
+  if(hash.startsWith('#animate/')){
+    const p=hash.split('/');
+    const word=(p[1]||'').toUpperCase().slice(0,9);
+    const style=p[2]||'pop';
+    if(word){const w=setInterval(()=>{if(loadedFont){clearInterval(w);showPublicView(word,style);}},100);return;}
   }
   showView('animate');
 })();
