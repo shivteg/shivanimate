@@ -276,8 +276,12 @@ let currentWord='', currentStyle='pop';
 let threeScene, threeCamera, threeRenderer, threeComposer;
 let letterMeshes=[], animating=false;
 let mouseX=0, mouseY=0, targetX=0, targetY=0;
-let loadedFont=null;
-const FONT_URL='https://threejs.org/examples/fonts/helvetiker_bold.typeface.json';
+let loadedFont=null, fontLoadPromise=null;
+const FONT_URLS=[
+  'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+  'https://unpkg.com/three@0.165.0/examples/fonts/helvetiker_bold.typeface.json',
+  'https://cdn.jsdelivr.net/npm/three@0.165.0/examples/fonts/helvetiker_bold.typeface.json'
+];
 const STYLE_COLORS={pop:['#a78bfa','#22d3ee'],wave:['#22d3ee','#4ade80'],glitch:['#f87171','#fbbf24'],fire:['#fb923c','#fbbf24'],spin:['#60a5fa','#c084fc'],rainbow:['#f87171','#c084fc']};
 const RAINBOW=['#f87171','#fb923c','#facc15','#4ade80','#60a5fa','#c084fc','#f472b6'];
 
@@ -397,7 +401,18 @@ window.addEventListener('mousemove',e=>{mouseX=(e.clientX/innerWidth-.5)*2;mouse
 
 // ── FONT ──
 const fontLoader=new FontLoader();
-fontLoader.load(FONT_URL,f=>{loadedFont=f;});
+function loadFont(){
+  if(loadedFont) return Promise.resolve(loadedFont);
+  if(fontLoadPromise) return fontLoadPromise;
+  fontLoadPromise=FONT_URLS.reduce((chain,url)=>chain.catch(()=>new Promise((resolve,reject)=>{
+    fontLoader.load(url,font=>{loadedFont=font;resolve(font);},undefined,reject);
+  })),Promise.reject()).catch(err=>{
+    fontLoadPromise=null;
+    throw err;
+  });
+  return fontLoadPromise;
+}
+loadFont().catch(()=>showToast('Could not load the 3D font. Check your connection and try again.'));
 
 // ── STAGE SCENE ──
 function initStageScene(canvas){
@@ -449,13 +464,17 @@ window.animateWord=async()=>{
   const inp=document.getElementById('word-input');
   const word=inp.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9);
   if(!word){showToast('Type a word first!');return;}
-  if(!loadedFont){showToast('Font loading… try again!');return;}
+  if(!loadedFont){
+    showToast('Loading 3D font...');
+    try{await loadFont();}catch(e){showToast('Could not load the 3D font. Try again online.');return;}
+  }
   currentWord=word;
+  letterMeshes.forEach(m=>{m.geometry.dispose();m.material.dispose();});
+  letterMeshes=[];
   document.getElementById('canvas-placeholder').style.display='none';
   const canvas=document.getElementById('three-canvas');
   canvas.style.display='block';
   initStageScene(canvas);
-  letterMeshes.forEach(m=>{m.geometry.dispose();m.material.dispose();threeScene.remove(m);});
   letterMeshes=buildLetters(word,currentStyle,threeScene);
   document.getElementById('stage-label').textContent=word+' • '+currentStyle+' • 3D';
   const shareUrl=buildShareUrl(word,currentStyle);
@@ -508,7 +527,9 @@ function startLoop(canvas){
 // ── PUBLIC VIEW ──
 window.showPublicView=async(word,style)=>{
   showView('public');
-  if(!loadedFont) await new Promise(res=>{const c=setInterval(()=>{if(loadedFont){clearInterval(c);res();}},100);});
+  if(!loadedFont){
+    try{await loadFont();}catch(e){showToast('Could not load the 3D font. Try again online.');return;}
+  }
   const canvas=document.getElementById('pub-canvas');
   const W=canvas.clientWidth,H=canvas.clientHeight||380;
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
@@ -522,8 +543,8 @@ window.showPublicView=async(word,style)=>{
   camera.position.set(0,0,14);
   scene.add(new THREE.AmbientLight(0xffffff,.4));
   const dL=new THREE.DirectionalLight(0xffffff,1.5); dL.position.set(5,10,8); scene.add(dL);
-  scene.add(Object.assign(new THREE.PointLight(0xa78bfa,5,30),{position:{x:-6,y:4,z:6}}));
-  scene.add(Object.assign(new THREE.PointLight(0x22d3ee,5,30),{position:{x:6,y:-4,z:6}}));
+  const pL1=new THREE.PointLight(0xa78bfa,5,30); pL1.position.set(-6,4,6); scene.add(pL1);
+  const pL2=new THREE.PointLight(0x22d3ee,5,30); pL2.position.set(6,-4,6); scene.add(pL2);
   const composer=new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene,camera));
   composer.addPass(new UnrealBloomPass(new THREE.Vector2(W,H),1.0,.6,.15));
@@ -571,16 +592,18 @@ window.showToast=(msg)=>{
 };
 
 // ── ROUTE ──
-(function(){
+function handleRoute(){
   const hash=location.hash;
   if(hash.startsWith('#animate/')){
     const p=hash.split('/');
     const word=(p[1]||'').toUpperCase().slice(0,9);
     const style=p[2]||'pop';
-    if(word){const w=setInterval(()=>{if(loadedFont){clearInterval(w);showPublicView(word,style);}},100);return;}
+    if(word){showPublicView(word,style);return;}
   }
   showView('animate');
-})();
+}
+window.addEventListener('hashchange',handleRoute);
+handleRoute();
 </script>
 </body>
 </html>
