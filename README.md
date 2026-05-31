@@ -14,7 +14,7 @@ A fun, production-ready web app that lets users **sign up/sign in via Supabase A
 |---|---|
 | 🔐 Auth | Supabase email/password sign up & sign in |
 | 🔤 Word Animator | Type up to 9 characters and animate them |
-| 🎨 6 Animation Styles | Pop, Wave, Glitch, Fire, Spin, Rainbow |
+| 🎨 20 Animation Styles | Pop, Wave, Glitch, Fire, Spin, Rainbow, Orbit, Chrome, Matrix, Storm, Neon, Fracture, Vortex, Pulse, Float, Jelly, Ghost, Blacklight, Hyper, Disco |
 | 🔗 Public Share Link | Hash-based URL — anyone can view, no login needed |
 | 🌙 Dark / Light Mode | Toggleable, defaults to dark |
 | 📱 Responsive | Works great on mobile and desktop |
@@ -112,6 +112,20 @@ Example: `https://shivanimate.vercel.app/#animate/SHIVA/rainbow`
 | **Fire** | Letters ignite from below |
 | **Spin** | 3D Y-axis flip entrance |
 | **Rainbow** | Pop entrance + continuous rainbow color cycling |
+| **Orbit** | Letters circle forward in 3D space |
+| **Chrome** | Metallic, reflective text with subtle rotation |
+| **Matrix** | Digital drop-in with green pulse energy |
+| **Storm** | Electric shake with flash-like highlights |
+| **Neon** | Soft glowing sign pulse |
+| **Fracture** | Letters assemble from scattered 3D pieces |
+| **Vortex** | Letters swirl into place from a distance |
+| **Pulse** | Letters heartbeat with rhythmic scaling & glow |
+| **Float** | Zero-gravity drifting with gentle rotation |
+| **Jelly** | Squishy squash-and-stretch bounce |
+| **Ghost** | Ethereal floating with transparency pulse |
+| **Blacklight** | UV-inspired deep purple glow and drift |
+| **Hyper** | High-frequency vibrating energy |
+| **Disco** | Rapid color-flashing party mode |
 
 ---
 
@@ -139,8 +153,8 @@ shipanimate/
 
 ## 🔧 Customization
 
-- **Add more styles**: Extend `ANIM_MAP` and `@keyframes` in the CSS
-- **Change colors**: Edit `LETTER_COLORS` array in JS
+- **Add more styles**: Extend `STYLE_COLORS`, add a chip, and add a case in `applyLetterEffect`
+- **Change colors**: Edit `STYLE_COLORS` and `RAINBOW` in JS
 - **Add username**: Store display names in Supabase `profiles` table
 - **Animation history**: Create an `animations` table in Supabase to save past words
 
