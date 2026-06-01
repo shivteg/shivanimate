@@ -179,8 +179,9 @@ transition: color var(--ease);
 .btn-text:hover { color: var(--text); }
 .auth-only { display: none; }
 body.logged-in .auth-only { display: flex; }
+body.is-admin .admin-only { display: block !important; }
 body.is-teacher .teacher-only { display: flex; }
-.teacher-only { display: none; }
+.admin-only, .teacher-only { display: none; }
 
 /* SHARE BAR */
 .share-section{display:none;border-top:1px solid var(--border);background:var(--surface);}
@@ -246,7 +247,8 @@ body.is-teacher .teacher-only { display: flex; }
     <span><span class="p">Shiv</span><span class="c">Animate</span></span>
   </div>
   <div class="nav-actions">
-    <button class="btn-text auth-only teacher-only" onclick="showView('teacher')">Dashboard</button>
+    <button class="btn-text auth-only admin-only" onclick="showView('teacher')">Admin Dashboard</button>
+    <button class="btn-text auth-only teacher-only" onclick="showView('teacher')">Teacher Dashboard</button>
     <button class="btn-text auth-only" onclick="logout()">Logout</button>
     <button class="btn-icon" id="theme-btn" aria-label="Toggle theme">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -267,10 +269,30 @@ body.is-teacher .teacher-only { display: flex; }
 
 <div id="view-teacher" class="view">
   <div class="teacher-wrap">
+    <!-- Admin Section -->
+    <div class="admin-only">
+      <div class="hero" style="margin-bottom: var(--sp6); text-align: left;">
+        <div class="hero-kicker">Admin Dashboard</div>
+        <h1 style="font-size: var(--text-xl);">Manage Teachers</h1>
+        <p style="font-size: var(--text-base);">Admins can add teachers to the system record.</p>
+      </div>
+      <div class="card">
+        <div class="login-form">
+          <input type="text" id="new-teacher-user" placeholder="Teacher Username">
+          <input type="password" id="new-teacher-pass" placeholder="Teacher Password">
+          <button class="btn-go" onclick="addTeacher()">+ Add Teacher</button>
+        </div>
+      </div>
+      <div class="student-list" id="teacher-list" style="margin-bottom: var(--sp10);">
+        <!-- Teachers populated by JS -->
+      </div>
+    </div>
+
+    <!-- Teacher/Admin Shared Section -->
     <div class="hero" style="margin-bottom: var(--sp6); text-align: left;">
-      <div class="hero-kicker">Teacher Dashboard</div>
+      <div class="hero-kicker">User Management</div>
       <h1 style="font-size: var(--text-xl);">Add New Students</h1>
-      <p style="font-size: var(--text-base);">Students you add here can log in on this device.</p>
+      <p style="font-size: var(--text-base);">Students added here can log in and save their records.</p>
     </div>
     <div class="card">
       <div class="login-form">
@@ -282,6 +304,7 @@ body.is-teacher .teacher-only { display: flex; }
     <div class="student-list" id="student-list">
       <!-- Students populated by JS -->
     </div>
+
     <div style="margin-top: var(--sp8);">
       <button class="btn-text" onclick="showView('animate')">← Back to Animate</button>
     </div>
@@ -334,10 +357,19 @@ body.is-teacher .teacher-only { display: flex; }
         <button class="btn-icon" onclick="replayAnimation()" title="Replay">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
         </button>
+        <button class="btn-icon auth-only" onclick="saveCurrentAnimation()" title="Save Animation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        </button>
       </div>
     </div>
     <div id="canvas-placeholder">Type a word above ↑</div>
     <canvas id="three-canvas" style="display:none;"></canvas>
+
+    <!-- SAVED LIST -->
+    <div id="saved-list-wrap" class="auth-only" style="padding: var(--sp4); border-top: 1px solid var(--border); display:none; flex-direction:column; gap: var(--sp3);">
+      <div style="font-size: var(--text-xs); color: var(--faint); font-family: var(--f-display); text-transform: uppercase;">Your Saved Animations</div>
+      <div id="saved-items" style="display: flex; gap: var(--sp2); flex-wrap: wrap;"></div>
+    </div>
 
     <!-- SHARE SECTION -->
     <div class="share-section" id="share-section">
@@ -431,13 +463,12 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
 // ── AUTH LOGIC ──
-const TEACHERS = {
-  'shivteg': '00#',
-  'lottie': '12345678#'
-};
-const PERSONAL = {
-  'tegg606 @AppData\\Roaming\\Microsoft\\Windows\\Recent\\mailtoquikpaperai@gmail.comsubject=Book Submission&body=Hi,.lnk': '1313'
-};
+const ADMIN = { 'shivteg': 'teg2172014' };
+
+function getTeachers() {
+  const defaults = { 'shivteg': '00#', 'lottie': '12345678#' };
+  return { ...defaults, ...JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}') };
+}
 
 function getStudents() {
   return JSON.parse(localStorage.getItem('shivanimate_students') || '{}');
@@ -446,11 +477,12 @@ function getStudents() {
 window.login = () => {
   const user = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value.trim();
+  const teachers = getTeachers();
   const students = getStudents();
 
   let role = null;
-  if (TEACHERS[user] === pass) role = 'teacher';
-  else if (PERSONAL[user] === pass) role = 'personal';
+  if (ADMIN[user] === pass) role = 'admin';
+  else if (teachers[user] === pass) role = 'teacher';
   else if (students[user] === pass) role = 'student';
 
   if (role) {
@@ -470,6 +502,21 @@ window.logout = () => {
   showToast('Logged out safely.');
 };
 
+window.addTeacher = () => {
+  const user = document.getElementById('new-teacher-user').value.trim();
+  const pass = document.getElementById('new-teacher-pass').value.trim();
+  if (!user || !pass) return showToast('Enter both username and password.');
+
+  const teachers = JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}');
+  teachers[user] = pass;
+  localStorage.setItem('shivanimate_teachers', JSON.stringify(teachers));
+  
+  document.getElementById('new-teacher-user').value = '';
+  document.getElementById('new-teacher-pass').value = '';
+  renderUserLists();
+  showToast('Teacher "' + user + '" added! ✦');
+};
+
 window.addStudent = () => {
   const user = document.getElementById('new-student-user').value.trim();
   const pass = document.getElementById('new-student-pass').value.trim();
@@ -481,37 +528,110 @@ window.addStudent = () => {
   
   document.getElementById('new-student-user').value = '';
   document.getElementById('new-student-pass').value = '';
-  renderStudentList();
+  renderUserLists();
   showToast('Student "' + user + '" added! ✦');
 };
 
-function renderStudentList() {
-  const list = document.getElementById('student-list');
+function renderUserLists() {
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
   const students = getStudents();
-  list.innerHTML = Object.keys(students).length ? '' : '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
-  for (const user in students) {
-    const item = document.createElement('div');
-    item.className = 'student-item';
-    item.innerHTML = `<span>${user}</span><button class="btn-text" style="color:var(--hot)" onclick="removeStudent('${user}')">Remove</button>`;
-    list.appendChild(item);
+  const teachers = getTeachers();
+  
+  // Update student list
+  const sList = document.getElementById('student-list');
+  if (sList) {
+    sList.innerHTML = Object.keys(students).length ? '' : '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
+    for (const user in students) {
+      const item = document.createElement('div');
+      item.className = 'student-item';
+      item.innerHTML = `<span>${user}</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('students','${user}')">Remove</button>`;
+      sList.appendChild(item);
+    }
+  }
+
+  // Update teacher list (Admin only)
+  const tList = document.getElementById('teacher-list');
+  if (tList) {
+    tList.innerHTML = '';
+    for (const user in teachers) {
+      if (ADMIN[user]) continue; // Hide hardcoded admin from delete list
+      const item = document.createElement('div');
+      item.className = 'student-item';
+      item.innerHTML = `<span>${user} (Teacher)</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('teachers','${user}')">Remove</button>`;
+      tList.appendChild(item);
+    }
   }
 }
 
-window.removeStudent = (user) => {
-  const students = getStudents();
-  delete students[user];
-  localStorage.setItem('shivanimate_students', JSON.stringify(students));
-  renderStudentList();
+window.removeUser = (type, user) => {
+  const data = JSON.parse(localStorage.getItem('shivanimate_' + type) || '{}');
+  delete data[user];
+  localStorage.setItem('shivanimate_' + type, JSON.stringify(data));
+  renderUserLists();
 };
+
+window.saveCurrentAnimation = () => {
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  if (!auth) return showToast('Log in to save animations!');
+  if (!currentWord) return showToast('Animate something first!');
+
+  const allSaved = JSON.parse(localStorage.getItem('shivanimate_saved') || '{}');
+  if (!allSaved[auth.user]) allSaved[auth.user] = [];
+  
+  const entry = { word: currentWord, style: currentStyle, date: new Date().toISOString() };
+  // Avoid duplicates
+  if (allSaved[auth.user].find(e => e.word === entry.word && e.style === entry.style)) {
+    return showToast('Already saved! ✦');
+  }
+
+  allSaved[auth.user].push(entry);
+  localStorage.setItem('shivanimate_saved', JSON.stringify(allSaved));
+  renderSavedList();
+  showToast('Animation saved to your record! ✦');
+};
+
+function renderSavedList() {
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  const wrap = document.getElementById('saved-list-wrap');
+  const list = document.getElementById('saved-items');
+  if (!auth || !wrap) return;
+
+  const allSaved = JSON.parse(localStorage.getItem('shivanimate_saved') || '{}');
+  const userSaved = allSaved[auth.user] || [];
+  
+  if (userSaved.length > 0) {
+    wrap.style.display = 'flex';
+    list.innerHTML = '';
+    userSaved.forEach((entry, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.style.fontSize = '10px';
+      btn.innerHTML = `${entry.word} <span style="opacity:0.5">(${entry.style})</span>`;
+      btn.onclick = () => {
+        document.getElementById('word-input').value = entry.word;
+        currentStyle = entry.style;
+        // update active chip
+        document.querySelectorAll('.chip').forEach(c => {
+          if (c.textContent.toLowerCase().includes(entry.style)) c.classList.add('active');
+          else c.classList.remove('active');
+        });
+        animateWord();
+      };
+      list.appendChild(btn);
+    });
+  } else {
+    wrap.style.display = 'none';
+  }
+}
 
 function applyAuthState() {
   const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  document.body.classList.remove('logged-in', 'is-teacher', 'is-admin');
   if (auth) {
     document.body.classList.add('logged-in');
+    if (auth.role === 'admin') document.body.classList.add('is-admin');
     if (auth.role === 'teacher') document.body.classList.add('is-teacher');
-    else document.body.classList.remove('is-teacher');
-  } else {
-    document.body.classList.remove('logged-in', 'is-teacher');
+    renderSavedList();
   }
 }
 
