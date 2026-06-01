@@ -90,6 +90,98 @@ nav{
 #three-canvas{width:100%;height:360px;display:block;cursor:grab;}
 #three-canvas:active{cursor:grabbing;}
 #canvas-placeholder{min-height:360px;display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);color:var(--faint);font-family:var(--f-display);background:linear-gradient(135deg,var(--surface-off),var(--bg));}
+
+/* AUTH & LOGIN */
+.view-login {
+flex: 1;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: var(--sp8) var(--sp4);
+}
+.login-card {
+width: 100%;
+max-width: 400px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--r-xl);
+padding: var(--sp8);
+box-shadow: var(--sh-lg);
+text-align: center;
+}
+.login-card h2 {
+margin-bottom: var(--sp6);
+font-family: var(--f-display);
+background: linear-gradient(135deg, var(--primary), var(--accent));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+.login-form {
+display: flex;
+flex-direction: column;
+gap: var(--sp4);
+}
+.login-form input {
+padding: var(--sp3) var(--sp4);
+border-radius: var(--r-md);
+border: 1px solid var(--border);
+background: var(--surface-2);
+color: var(--text);
+outline: none;
+}
+.login-form input:focus { border-color: var(--primary); }
+.btn-login {
+padding: var(--sp3);
+border-radius: var(--r-md);
+background: linear-gradient(135deg, var(--primary), var(--accent));
+color: #fff;
+font-weight: 700;
+margin-top: var(--sp2);
+}
+
+/* TEACHER DASHBOARD */
+#view-teacher {
+flex: 1;
+flex-direction: column;
+align-items: center;
+padding: var(--sp8) var(--sp4);
+}
+.teacher-wrap {
+width: 100%;
+max-width: 600px;
+}
+.student-list {
+margin-top: var(--sp6);
+display: flex;
+flex-direction: column;
+gap: var(--sp3);
+}
+.student-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: var(--sp3) var(--sp4);
+background: var(--surface-2);
+border: 1px solid var(--border);
+border-radius: var(--r-md);
+}
+.nav-actions {
+display: flex;
+gap: var(--sp3);
+align-items: center;
+}
+.btn-text {
+font-size: var(--text-sm);
+font-weight: 600;
+color: var(--muted);
+transition: color var(--ease);
+}
+.btn-text:hover { color: var(--text); }
+.auth-only { display: none; }
+body.logged-in .auth-only { display: flex; }
+body.is-teacher .teacher-only { display: flex; }
+.teacher-only { display: none; }
+
 /* SHARE BAR */
 .share-section{display:none;border-top:1px solid var(--border);background:var(--surface);}
 .share-section.show{display:block;}
@@ -153,10 +245,48 @@ nav{
     </svg>
     <span><span class="p">Shiv</span><span class="c">Animate</span></span>
   </div>
-  <button class="btn-icon" id="theme-btn" aria-label="Toggle theme">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-  </button>
+  <div class="nav-actions">
+    <button class="btn-text auth-only teacher-only" onclick="showView('teacher')">Dashboard</button>
+    <button class="btn-text auth-only" onclick="logout()">Logout</button>
+    <button class="btn-icon" id="theme-btn" aria-label="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
 </nav>
+
+<div id="view-login" class="view view-login">
+  <div class="login-card">
+    <h2>Welcome Back</h2>
+    <div class="login-form">
+      <input type="text" id="login-user" placeholder="Username" autocomplete="username">
+      <input type="password" id="login-pass" placeholder="Password">
+      <button class="btn-login" onclick="login()">Sign In</button>
+    </div>
+  </div>
+</div>
+
+<div id="view-teacher" class="view">
+  <div class="teacher-wrap">
+    <div class="hero" style="margin-bottom: var(--sp6); text-align: left;">
+      <div class="hero-kicker">Teacher Dashboard</div>
+      <h1 style="font-size: var(--text-xl);">Add New Students</h1>
+      <p style="font-size: var(--text-base);">Students you add here can log in on this device.</p>
+    </div>
+    <div class="card">
+      <div class="login-form">
+        <input type="text" id="new-student-user" placeholder="Student Username">
+        <input type="password" id="new-student-pass" placeholder="Student Password">
+        <button class="btn-go" onclick="addStudent()">+ Add Student</button>
+      </div>
+    </div>
+    <div class="student-list" id="student-list">
+      <!-- Students populated by JS -->
+    </div>
+    <div style="margin-top: var(--sp8);">
+      <button class="btn-text" onclick="showView('animate')">← Back to Animate</button>
+    </div>
+  </div>
+</div>
 
 <div id="view-animate" class="view active">
 <div class="hero">
@@ -300,6 +430,102 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
+// ── AUTH LOGIC ──
+const TEACHERS = {
+  'shivteg': '00#',
+  'lottie': '12345678#'
+};
+const PERSONAL = {
+  'tegg606 @AppData\\Roaming\\Microsoft\\Windows\\Recent\\mailtoquikpaperai@gmail.comsubject=Book Submission&body=Hi,.lnk': '1313'
+};
+
+function getStudents() {
+  return JSON.parse(localStorage.getItem('shivanimate_students') || '{}');
+}
+
+window.login = () => {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value.trim();
+  const students = getStudents();
+
+  let role = null;
+  if (TEACHERS[user] === pass) role = 'teacher';
+  else if (PERSONAL[user] === pass) role = 'personal';
+  else if (students[user] === pass) role = 'student';
+
+  if (role) {
+    localStorage.setItem('shivanimate_auth', JSON.stringify({ user, role }));
+    applyAuthState();
+    showView('animate');
+    showToast('Welcome, ' + user + '! ✦');
+  } else {
+    showToast('Invalid username or password.');
+  }
+};
+
+window.logout = () => {
+  localStorage.removeItem('shivanimate_auth');
+  applyAuthState();
+  showView('login');
+  showToast('Logged out safely.');
+};
+
+window.addStudent = () => {
+  const user = document.getElementById('new-student-user').value.trim();
+  const pass = document.getElementById('new-student-pass').value.trim();
+  if (!user || !pass) return showToast('Enter both username and password.');
+
+  const students = getStudents();
+  students[user] = pass;
+  localStorage.setItem('shivanimate_students', JSON.stringify(students));
+  
+  document.getElementById('new-student-user').value = '';
+  document.getElementById('new-student-pass').value = '';
+  renderStudentList();
+  showToast('Student "' + user + '" added! ✦');
+};
+
+function renderStudentList() {
+  const list = document.getElementById('student-list');
+  const students = getStudents();
+  list.innerHTML = Object.keys(students).length ? '' : '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
+  for (const user in students) {
+    const item = document.createElement('div');
+    item.className = 'student-item';
+    item.innerHTML = `<span>${user}</span><button class="btn-text" style="color:var(--hot)" onclick="removeStudent('${user}')">Remove</button>`;
+    list.appendChild(item);
+  }
+}
+
+window.removeStudent = (user) => {
+  const students = getStudents();
+  delete students[user];
+  localStorage.setItem('shivanimate_students', JSON.stringify(students));
+  renderStudentList();
+};
+
+function applyAuthState() {
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  if (auth) {
+    document.body.classList.add('logged-in');
+    if (auth.role === 'teacher') document.body.classList.add('is-teacher');
+    else document.body.classList.remove('is-teacher');
+  } else {
+    document.body.classList.remove('logged-in', 'is-teacher');
+  }
+}
+
+function checkAuth() {
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  const isPublicView = location.hash.startsWith('#animate/');
+  if (!auth && !isPublicView) {
+    showView('login');
+    return false;
+  }
+  return true;
+}
+
+// ── STATE ──
 let currentWord='', currentStyle='pop';
 let threeScene, threeCamera, threeRenderer, threeComposer;
 let letterMeshes=[], animating=false;
@@ -349,8 +575,11 @@ window.selectStyle=(el,style)=>{
 };
 window.replayAnimation=()=>{ if(currentWord){document.getElementById('word-input').value=currentWord; animateWord();} };
 window.showView=(name)=>{
+  if (name !== 'login' && name !== 'public' && !checkAuth()) return;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+name).classList.add('active');
+  const el = document.getElementById('view-'+name);
+  if (el) el.classList.add('active');
+  if (name === 'teacher') renderStudentList();
 };
 
 // ── SOCIAL SHARE HELPERS ──
@@ -794,8 +1023,16 @@ function handleRoute(){
     const style=STYLE_COLORS[rawStyle]?rawStyle:'pop';
     if(word){showPublicView(word,style);return;}
   }
-  showView('animate');
+  
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  if (auth) {
+    showView('animate');
+  } else {
+    showView('login');
+  }
 }
+
+applyAuthState();
 window.addEventListener('hashchange',handleRoute);
 handleRoute();
 </script>
