@@ -258,6 +258,7 @@ body.is-teacher .teacher-only { display: flex; }
 
 <div id="view-login" class="view view-login">
   <div class="login-card">
+    <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SYSTEM UPDATE V2.1 LIVE ✓</div>
     <h2>Welcome Back</h2>
     <div class="login-form">
       <input type="text" id="login-user" placeholder="Username" autocomplete="username">
@@ -283,8 +284,11 @@ body.is-teacher .teacher-only { display: flex; }
           <button class="btn-go" onclick="addTeacher()">+ Add Teacher</button>
         </div>
       </div>
-      <div class="student-list" id="teacher-list" style="margin-bottom: var(--sp10);">
+      <div class="student-list" id="teacher-list" style="margin-bottom: var(--sp4);">
         <!-- Teachers populated by JS -->
+      </div>
+      <div style="margin-bottom: var(--sp10);">
+        <button class="btn-text" onclick="exportPermanentRecord()" style="color:var(--accent);">💾 Export Permanent Record</button>
       </div>
     </div>
 
@@ -436,6 +440,7 @@ body.is-teacher .teacher-only { display: flex; }
 </div>
 </div>
 <div class="toast" id="toast"></div>
+<footer style="position:fixed; bottom:10px; right:10px; font-size:9px; color:var(--faint); font-family:monospace; pointer-events:none; z-index:100;">SHIVANIMATE CORE V2.2 • PERMANENT ACCESS ACTIVE</footer>
 
 <script type="importmap">
 {
@@ -466,13 +471,27 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 const ADMIN = { 'shivteg': 'teg2172014' };
 
 function getTeachers() {
-  const defaults = { 'shivteg': '00#', 'lottie': '12345678#' };
+  const defaults = { 'shivteg': '00#', 'lottie': '12345678#', 'gungun': '12345' };
   return { ...defaults, ...JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}') };
 }
 
 function getStudents() {
-  return JSON.parse(localStorage.getItem('shivanimate_students') || '{}');
+  const defaults = { 'parneet': 'parneet' };
+  return { ...defaults, ...JSON.parse(localStorage.getItem('shivanimate_students') || '{}') };
 }
+
+window.exportPermanentRecord = () => {
+  const teachers = JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}');
+  const students = JSON.parse(localStorage.getItem('shivanimate_students') || '{}');
+  const record = { teachers, students };
+  const blob = new Blob([JSON.stringify(record, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'shivanimate_record.json';
+  a.click();
+  showToast('Record exported! Send this to the AI to make it permanent. ✦');
+};
 
 window.login = () => {
   const user = document.getElementById('login-user').value.trim();
