@@ -139,7 +139,7 @@ font-weight: 700;
 margin-top: var(--sp2);
 }
 
-/* TEACHER DASHBOARD */
+/* DASHBOARD */
 #view-teacher {
 flex: 1;
 flex-direction: column;
@@ -182,6 +182,20 @@ body.logged-in .auth-only { display: flex; }
 body.is-admin .admin-only { display: block !important; }
 body.is-teacher .teacher-only { display: flex; }
 .admin-only, .teacher-only { display: none; }
+
+/* VERIFICATION BANNER */
+.verify-banner {
+  background: var(--accent2);
+  color: #000;
+  padding: var(--sp3);
+  border-radius: var(--r-md);
+  text-align: center;
+  font-weight: 800;
+  font-size: var(--text-sm);
+  margin-bottom: var(--sp6);
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+}
 
 /* SHARE BAR */
 .share-section{display:none;border-top:1px solid var(--border);background:var(--surface);}
@@ -258,7 +272,7 @@ body.is-teacher .teacher-only { display: flex; }
 
 <div id="view-login" class="view view-login">
   <div class="login-card">
-    <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SYSTEM UPDATE V2.1 LIVE ✓</div>
+    <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SYSTEM UPDATE V2.2 LIVE ✓</div>
     <h2>Welcome Back</h2>
     <div class="login-form">
       <input type="text" id="login-user" placeholder="Username" autocomplete="username">
@@ -270,6 +284,13 @@ body.is-teacher .teacher-only { display: flex; }
 
 <div id="view-teacher" class="view">
   <div class="teacher-wrap">
+    
+    <!-- HIGH VISIBILITY VERIFICATION BANNER -->
+    <div class="verify-banner">
+      ⚠️ VERIFICATION REQUIRED: To add student or teacher it needs to be verified. <br>
+      To verify do whatsapp message on - 8054830509
+    </div>
+
     <!-- Admin Section -->
     <div class="admin-only">
       <div class="hero" style="margin-bottom: var(--sp6); text-align: left;">
@@ -471,12 +492,24 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 const ADMIN = { 'shivteg': 'teg2172014' };
 
 function getTeachers() {
-  const defaults = { 'shivteg': '00#', 'lottie': '12345678#', 'gungun': '12345' };
+  const defaults = { 
+    'shivteg': '00#', 
+    'lottie': '12345678#', 
+    'gungun': '12345', 
+    'Drishti': 'drishti.school',
+    'drishti': 'drishti.school'
+  };
   return { ...defaults, ...JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}') };
 }
 
 function getStudents() {
-  const defaults = { 'parneet': 'parneet' };
+  const defaults = { 
+    'parneet': 'parneet', 
+    'Ravi': '00', 
+    'ravi': '00',
+    'Shivteg': '00',
+    'shivteg': '00'
+  };
   return { ...defaults, ...JSON.parse(localStorage.getItem('shivanimate_students') || '{}') };
 }
 
@@ -494,15 +527,21 @@ window.exportPermanentRecord = () => {
 };
 
 window.login = () => {
-  const user = document.getElementById('login-user').value.trim();
+  const userInput = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value.trim();
   const teachers = getTeachers();
   const students = getStudents();
 
   let role = null;
-  if (ADMIN[user] === pass) role = 'admin';
-  else if (teachers[user] === pass) role = 'teacher';
-  else if (students[user] === pass) role = 'student';
+  let user = userInput;
+
+  if (ADMIN[userInput] === pass) {
+    role = 'admin';
+  } else if (teachers[userInput] === pass) {
+    role = 'teacher';
+  } else if (students[userInput] === pass) {
+    role = 'student';
+  }
 
   if (role) {
     localStorage.setItem('shivanimate_auth', JSON.stringify({ user, role }));
@@ -524,6 +563,10 @@ window.logout = () => {
 window.addTeacher = () => {
   const user = document.getElementById('new-teacher-user').value.trim();
   const pass = document.getElementById('new-teacher-pass').value.trim();
+  
+  // MANDATORY VERIFICATION MESSAGE
+  alert('⚠️ VERIFICATION REQUIRED\n\nto add student or teacher it needs to be verified to verify do whatsapp message on - 8054830509');
+  
   if (!user || !pass) return showToast('Enter both username and password.');
 
   const teachers = JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}');
@@ -539,9 +582,13 @@ window.addTeacher = () => {
 window.addStudent = () => {
   const user = document.getElementById('new-student-user').value.trim();
   const pass = document.getElementById('new-student-pass').value.trim();
+
+  // MANDATORY VERIFICATION MESSAGE
+  alert('⚠️ VERIFICATION REQUIRED\n\nto add student or teacher it needs to be verified to verify do whatsapp message on - 8054830509');
+
   if (!user || !pass) return showToast('Enter both username and password.');
 
-  const students = getStudents();
+  const students = JSON.parse(localStorage.getItem('shivanimate_students') || '{}');
   students[user] = pass;
   localStorage.setItem('shivanimate_students', JSON.stringify(students));
   
@@ -556,7 +603,6 @@ function renderUserLists() {
   const students = getStudents();
   const teachers = getTeachers();
   
-  // Update student list
   const sList = document.getElementById('student-list');
   if (sList) {
     sList.innerHTML = Object.keys(students).length ? '' : '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
@@ -568,12 +614,11 @@ function renderUserLists() {
     }
   }
 
-  // Update teacher list (Admin only)
   const tList = document.getElementById('teacher-list');
   if (tList) {
     tList.innerHTML = '';
     for (const user in teachers) {
-      if (ADMIN[user]) continue; // Hide hardcoded admin from delete list
+      if (ADMIN[user]) continue;
       const item = document.createElement('div');
       item.className = 'student-item';
       item.innerHTML = `<span>${user} (Teacher)</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('teachers','${user}')">Remove</button>`;
@@ -598,7 +643,6 @@ window.saveCurrentAnimation = () => {
   if (!allSaved[auth.user]) allSaved[auth.user] = [];
   
   const entry = { word: currentWord, style: currentStyle, date: new Date().toISOString() };
-  // Avoid duplicates
   if (allSaved[auth.user].find(e => e.word === entry.word && e.style === entry.style)) {
     return showToast('Already saved! ✦');
   }
@@ -629,7 +673,6 @@ function renderSavedList() {
       btn.onclick = () => {
         document.getElementById('word-input').value = entry.word;
         currentStyle = entry.style;
-        // update active chip
         document.querySelectorAll('.chip').forEach(c => {
           if (c.textContent.toLowerCase().includes(entry.style)) c.classList.add('active');
           else c.classList.remove('active');
@@ -645,11 +688,12 @@ function renderSavedList() {
 
 function applyAuthState() {
   const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
-  document.body.classList.remove('logged-in', 'is-teacher', 'is-admin');
+  document.body.classList.remove('logged-in', 'is-teacher', 'is-admin', 'is-student');
   if (auth) {
     document.body.classList.add('logged-in');
     if (auth.role === 'admin') document.body.classList.add('is-admin');
     if (auth.role === 'teacher') document.body.classList.add('is-teacher');
+    if (auth.role === 'student') document.body.classList.add('is-student');
     renderSavedList();
   }
 }
@@ -714,11 +758,19 @@ window.selectStyle=(el,style)=>{
 };
 window.replayAnimation=()=>{ if(currentWord){document.getElementById('word-input').value=currentWord; animateWord();} };
 window.showView=(name)=>{
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  
+  // STRICT STUDENT BLOCK
+  if (name === 'teacher' && auth && auth.role === 'student') {
+    showToast('ACCESS DENIED: Dashboard is for teachers only.');
+    return;
+  }
+  
   if (name !== 'login' && name !== 'public' && !checkAuth()) return;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const el = document.getElementById('view-'+name);
   if (el) el.classList.add('active');
-  if (name === 'teacher') renderStudentList();
+  if (name === 'teacher') renderUserLists();
 };
 
 // ── SOCIAL SHARE HELPERS ──
@@ -1114,7 +1166,6 @@ window.showPublicView=async(word,style)=>{
   composer.addPass(new UnrealBloomPass(new THREE.Vector2(W,H),1.0,.6,.15));
   const grid=new THREE.GridHelper(40,30,0x333355,0x222244); grid.position.y=-3.5; scene.add(grid);
   const meshes=buildLetters(word.toUpperCase(),style,scene);
-  // set pub share links
   const shareUrl=buildShareUrl(word.toUpperCase(),style);
   setPubShareLinks(shareUrl,word.toUpperCase());
   const ig=document.getElementById('pub-share-ig');
