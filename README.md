@@ -1,10 +1,8 @@
 # ✦ ShivAnimate
 
-> **Animate any word. Share the magic.**
+> **Animate any word. Watch it explode in 3D.**
 
-A fun, production-ready web app that lets users **sign up/sign in via Supabase Auth**, type a word (up to 9 characters), choose an animation style, and **share a public link** that anyone can view — no login required to view shared animations.
-
-**Live demo → deploy on Vercel in 2 minutes.**
+A fun, production-ready web app that lets users type a word (up to 9 characters), choose an animation style, and **share a public link** that anyone can view — no login required to view shared animations.
 
 ---
 
@@ -12,7 +10,7 @@ A fun, production-ready web app that lets users **sign up/sign in via Supabase A
 
 | Feature | Details |
 |---|---|
-| 🔐 Auth | Supabase email/password sign up & sign in |
+| 🔐 Auth | Local system with Admin, Teacher, and Student roles |
 | 🔤 Word Animator | Type up to 9 characters and animate them |
 | 🎨 20 Animation Styles | Pop, Wave, Glitch, Fire, Spin, Rainbow, Orbit, Chrome, Matrix, Storm, Neon, Fracture, Vortex, Pulse, Float, Jelly, Ghost, Blacklight, Hyper, Disco |
 | 🔗 Public Share Link | Hash-based URL — anyone can view, no login needed |
@@ -21,60 +19,46 @@ A fun, production-ready web app that lets users **sign up/sign in via Supabase A
 
 ---
 
-## 🚀 Deploy in 2 Minutes
+## 🔐 Access & Accounts
 
-### 1. Clone & configure Supabase
+The system comes with several pre-configured accounts:
+
+### 👑 Admin
+- **Username:** `shivteg`
+- **Password:** `teg2172014`
+
+### 🏫 Teachers (Access Dashboard + Animate)
+- **aditi:** `aditi_arora`
+- **Drishti:** `drishti.school`
+- **shivteg:** `00#`
+
+### 🎓 Students (Access Animate ONLY)
+- **s 1:** `00`
+- **st. 3:** `00`
+- **s0111:** `00`
+- **s1:** `00`
+- **Ravi:** `00`
+- **Shivteg:** `00`
+- **parneet:** `parneet`
+
+> **🔒 Access Note:** Students are strictly restricted to the "Animate" view. Only Teachers and Admins can access the Dashboard to manage users.
+>
+> **⚠️ Verification:** Adding new users via the Dashboard requires WhatsApp verification (message - 8054830509).
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
 
 ```bash
 git clone https://github.com/Lottie128/shivanimate.git
 cd shivanimate
 ```
 
-Open `index.html` and replace the two placeholders at the top of the `<script>` block:
+### 2. Run locally
 
-```js
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';       // e.g. https://xxxx.supabase.co
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';  // your anon/public key
-```
-
-Get these from **[Supabase Dashboard](https://supabase.com/dashboard)** → your project → Settings → API.
-
-> **No database tables needed.** ShivAnimate only uses Supabase Auth — no custom tables required.
-
-### 2. Enable Email Auth in Supabase
-
-In your Supabase project → **Authentication → Providers → Email** — make sure it's enabled.
-
-For instant login without email confirmation during testing:
-- Go to **Authentication → Settings → Disable email confirmation** ✓
-
-### 3. Deploy to Vercel
-
-**Option A — Vercel CLI:**
-```bash
-npm i -g vercel
-vercel
-```
-
-**Option B — Vercel Dashboard:**
-1. Push this repo to GitHub
-2. Go to [vercel.com/new](https://vercel.com/new)
-3. Import the repo → Deploy
-4. Done! 🎉
-
-No build step, no framework config needed — it's a static HTML file.
-
-### 4. Set Supabase Redirect URL (for production)
-
-In Supabase → **Authentication → URL Configuration → Site URL** → set your Vercel URL:
-```
-https://your-project.vercel.app
-```
-
-Also add to **Redirect URLs**:
-```
-https://your-project.vercel.app/**
-```
+Simply open `index.html` in your browser. No server or build step required.
 
 ---
 
@@ -83,7 +67,7 @@ https://your-project.vercel.app/**
 ```
 User visits site
   ↓
-Auth wall (Sign in / Sign up via Supabase)
+Auth wall (Sign in with pre-configured accounts)
   ↓
 Animate view: type a word → choose style → click Animate
   ↓
@@ -98,34 +82,6 @@ Anyone who opens that link sees the animation — no login needed
 ```
 https://yoursite.com/#animate/{WORD}/{STYLE}
 ```
-Example: `https://shivanimate.vercel.app/#animate/SHIVA/rainbow`
-
----
-
-## 🎨 Animation Styles
-
-| Style | Description |
-|---|---|
-| **Pop** | Letters bounce in with spring physics + neon glow loop |
-| **Wave** | Letters wave in like ocean ripples |
-| **Glitch** | Glitchy flickering entrance |
-| **Fire** | Letters ignite from below |
-| **Spin** | 3D Y-axis flip entrance |
-| **Rainbow** | Pop entrance + continuous rainbow color cycling |
-| **Orbit** | Letters circle forward in 3D space |
-| **Chrome** | Metallic, reflective text with subtle rotation |
-| **Matrix** | Digital drop-in with green pulse energy |
-| **Storm** | Electric shake with flash-like highlights |
-| **Neon** | Soft glowing sign pulse |
-| **Fracture** | Letters assemble from scattered 3D pieces |
-| **Vortex** | Letters swirl into place from a distance |
-| **Pulse** | Letters heartbeat with rhythmic scaling & glow |
-| **Float** | Zero-gravity drifting with gentle rotation |
-| **Jelly** | Squishy squash-and-stretch bounce |
-| **Ghost** | Ethereal floating with transparency pulse |
-| **Blacklight** | UV-inspired deep purple glow and drift |
-| **Hyper** | High-frequency vibrating energy |
-| **Disco** | Rapid color-flashing party mode |
 
 ---
 
@@ -133,18 +89,18 @@ Example: `https://shivanimate.vercel.app/#animate/SHIVA/rainbow`
 
 | Layer | Tech |
 |---|---|
-| Frontend | Vanilla HTML/CSS/JS — zero framework |
-| Auth | [Supabase Auth](https://supabase.com/auth) via CDN |
-| Hosting | [Vercel](https://vercel.com) (static) |
-| Fonts | Space Grotesk + Space Mono (Google Fonts) |
+| Frontend | Vanilla HTML/CSS/JS — Three.js for 3D |
+| Auth | Local Storage based persistent system |
+| Hosting | Vercel (Static) |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-shipanimate/
-├── index.html       ← Entire app (auth + animate + public view)
+shivanimate/
+├── index.html       ← Entire app (auth + animate + dashboard)
+├── portfolio.html   ← Personal portfolio of Shivteg
 ├── README.md
 └── vercel.json      ← Static routing config
 ```
@@ -155,8 +111,7 @@ shipanimate/
 
 - **Add more styles**: Extend `STYLE_COLORS`, add a chip, and add a case in `applyLetterEffect`
 - **Change colors**: Edit `STYLE_COLORS` and `RAINBOW` in JS
-- **Add username**: Store display names in Supabase `profiles` table
-- **Animation history**: Create an `animations` table in Supabase to save past words
+- **Export Data**: Use the "Export Permanent Record" button in the Admin Dashboard to save user data.
 
 ---
 
