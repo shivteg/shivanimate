@@ -279,6 +279,25 @@ body.is-teacher .teacher-only { display: flex; }
       <input type="text" id="login-user" placeholder="Username" autocomplete="username">
       <input type="password" id="login-pass" placeholder="Password">
       <button class="btn-login" onclick="login()">Sign In</button>
+      <div style="margin-top:var(--sp4); font-size:var(--text-sm); color:var(--muted);">
+        New user? <button class="btn-text" onclick="showView('signup')" style="color:var(--primary); font-weight:700;">Create Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-signup" class="view view-login">
+  <div class="login-card">
+    <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SECURE REGISTRATION ACTIVE ✓</div>
+    <h2>Join ShivAnimate</h2>
+    <p style="color:var(--muted); font-size:var(--text-sm); margin-bottom:var(--sp6);">Create an account to start animating</p>
+    <div class="login-form">
+      <input type="email" id="signup-email" placeholder="Email Address">
+      <input type="password" id="signup-pass" placeholder="Create Password">
+      <button class="btn-login" onclick="signup()">Sign Up</button>
+      <div style="margin-top:var(--sp4); font-size:var(--text-sm); color:var(--muted);">
+        Already have an account? <button class="btn-text" onclick="showView('login')" style="color:var(--primary); font-weight:700;">Sign In</button>
+      </div>
     </div>
   </div>
 </div>
@@ -508,6 +527,8 @@ function handleRoute() {
     if (parts.length >= 3) {
       showPublicView(parts[1], parts[2]);
     }
+  } else if (hash === '#signup') {
+    showView('signup');
   } else if (!currentUser) {
     showView('login');
   } else {
@@ -783,7 +804,8 @@ function applyAuthState() {
 
 function checkAuth() {
   const isPublicView = location.hash.startsWith('#animate/');
-  if (!currentUser && !isPublicView) {
+  const isSignupView = location.hash === '#signup';
+  if (!currentUser && !isPublicView && !isSignupView) {
     showView('login');
     return false;
   }
@@ -799,11 +821,38 @@ window.showView = (name) => {
     return;
   }
   
-  if (name !== 'login' && name !== 'public' && !checkAuth()) return;
+  if (name !== 'login' && name !== 'public' && name !== 'signup' && !checkAuth()) return;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const el = document.getElementById('view-' + name);
   if (el) el.classList.add('active');
   if (name === 'teacher') renderUserLists();
+};
+
+window.signup = async () => {
+  const email = document.getElementById('signup-email').value.trim();
+  const pass = document.getElementById('signup-pass').value.trim();
+
+  if (!email || !pass) return showToast('Please enter both email and password.');
+  if (!email.includes('@')) return showToast('Please enter a valid email address.');
+
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: pass
+  });
+
+  if (error) {
+    showToast('Sign up failed: ' + error.message);
+  } else {
+    // Show verification notification
+    const mailtoLink = "mailto:quikpaperai@gmail.com?subject=Book Submission&body=Hi,";
+    const verificationMsg = `✦ ACCOUNT CREATED! ✦\n\nTo verify your account, please send an email to:\nquikpaperai@gmail.com\n\nSubject: Book Submission\nBody: Hi,\n\nClick OK to open your email app and send the verification.`;
+    
+    alert(verificationMsg);
+    window.location.href = mailtoLink;
+    
+    showView('login');
+    showToast('Account created! Please verify via email.');
+  }
 };
 
 window.showToast = (msg) => {
