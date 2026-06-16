@@ -1114,17 +1114,33 @@ function applyLetterEffect(m,t,eased){
 }
 
 function startLoop(canvas){
+  if (window._shivanimate_loop_active) return;
+  window._shivanimate_loop_active = true;
   animating=true;
   const clock=new THREE.Clock();
   let drag=false,lastX=0,cameraYaw=0;
-  canvas.addEventListener('mousedown',e=>{drag=true;lastX=e.clientX;});
-  window.addEventListener('mouseup',()=>{drag=false;});
-  canvas.addEventListener('mousemove',e=>{if(drag){cameraYaw+=(e.clientX-lastX)*.005;lastX=e.clientX;}});
-  canvas.addEventListener('touchstart',e=>{drag=true;lastX=e.touches[0].clientX;},{passive:true});
-  canvas.addEventListener('touchend',()=>{drag=false;},{passive:true});
-  canvas.addEventListener('touchmove',e=>{if(drag){cameraYaw+=(e.touches[0].clientX-lastX)*.005;lastX=e.touches[0].clientX;}},{passive:true});
+  
+  const onMouseDown = e=>{drag=true;lastX=e.clientX;};
+  const onMouseUp = ()=>{drag=false;};
+  const onMouseMove = e=>{if(drag){cameraYaw+=(e.clientX-lastX)*.005;lastX=e.clientX;}};
+  const onTouchStart = e=>{drag=true;lastX=e.touches[0].clientX;};
+  const onTouchEnd = ()=>{drag=false;};
+  const onTouchMove = e=>{if(drag){cameraYaw+=(e.touches[0].clientX-lastX)*.005;lastX=e.touches[0].clientX;}};
+
+  canvas.addEventListener('mousedown',onMouseDown);
+  window.addEventListener('mouseup',onMouseUp);
+  canvas.addEventListener('mousemove',onMouseMove);
+  canvas.addEventListener('touchstart',onTouchStart,{passive:true});
+  window.addEventListener('touchend',onTouchEnd,{passive:true});
+  canvas.addEventListener('touchmove',onTouchMove,{passive:true});
+
   (function loop(){
-    if(!animating) return;
+    if(!animating) {
+      window._shivanimate_loop_active = false;
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchend', onTouchEnd);
+      return;
+    }
     requestAnimationFrame(loop);
     const t=clock.getElapsedTime();
     targetX+=(mouseX*.3-targetX)*.05;
@@ -1146,7 +1162,9 @@ function startLoop(canvas){
 }
 
 // ── PUBLIC VIEW ──
+let pubAnimating = false;
 window.showPublicView=async(word,style)=>{
+  pubAnimating = true;
   showView('public');
   if(!loadedFont){
     try{await loadFont();}catch(e){showToast('Could not load the 3D font. Try again online.');return;}
@@ -1177,8 +1195,16 @@ window.showPublicView=async(word,style)=>{
   ig.dataset.url=shareUrl; ig.dataset.word=word.toUpperCase();
   const clock2=new THREE.Clock();
   let pmx=0,pmy=0,ptx=0,pty=0;
-  window.addEventListener('mousemove',e=>{pmx=(e.clientX/innerWidth-.5)*2;pmy=(e.clientY/innerHeight-.5)*2;});
+  
+  const onPubMouseMove = e=>{pmx=(e.clientX/innerWidth-.5)*2;pmy=(e.clientY/innerHeight-.5)*2;};
+  window.addEventListener('mousemove',onPubMouseMove);
+
   (function pubLoop(){
+    if (!pubAnimating) {
+      window.removeEventListener('mousemove', onPubMouseMove);
+      renderer.dispose();
+      return;
+    }
     requestAnimationFrame(pubLoop);
     const t=clock2.getElapsedTime();
     ptx+=(pmx*.3-ptx)*.05; pty+=(-pmy*.2-pty)*.05;
@@ -1200,6 +1226,7 @@ window.goHome=(e)=>{
   currentWord=''; document.getElementById('word-input').value='';
   document.getElementById('cc').textContent='0/9';
   animating=false;
+  pubAnimating=false;
 };
 
 window.showToast=(msg)=>{
