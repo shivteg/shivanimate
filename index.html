@@ -569,10 +569,10 @@ window.addTeacher = () => {
   const user = document.getElementById('new-teacher-user').value.trim();
   const pass = document.getElementById('new-teacher-pass').value.trim();
   
+  if (!user || !pass) return showToast('Enter both username and password.');
+
   // MANDATORY VERIFICATION MESSAGE
   alert('⚠️ VERIFICATION REQUIRED\n\nto add student or teacher it needs to be verified to verify do whatsapp message on - 8054830509');
-  
-  if (!user || !pass) return showToast('Enter both username and password.');
 
   const teachers = JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}');
   teachers[user] = pass;
@@ -588,10 +588,10 @@ window.addStudent = () => {
   const user = document.getElementById('new-student-user').value.trim();
   const pass = document.getElementById('new-student-pass').value.trim();
 
+  if (!user || !pass) return showToast('Enter both username and password.');
+
   // MANDATORY VERIFICATION MESSAGE
   alert('⚠️ VERIFICATION REQUIRED\n\nto add student or teacher it needs to be verified to verify do whatsapp message on - 8054830509');
-
-  if (!user || !pass) return showToast('Enter both username and password.');
 
   const students = JSON.parse(localStorage.getItem('shivanimate_students') || '{}');
   students[user] = pass;
@@ -604,7 +604,7 @@ window.addStudent = () => {
 };
 
 function renderUserLists() {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
   const students = getStudents();
   const teachers = getTeachers();
   
@@ -633,14 +633,14 @@ function renderUserLists() {
 }
 
 window.removeUser = (type, user) => {
-  const data = JSON.parse(localStorage.getItem('shivanimate_' + type) || '{}');
+  const data = type === 'teachers' ? getTeachers() : getStudents();
   delete data[user];
   localStorage.setItem('shivanimate_' + type, JSON.stringify(data));
   renderUserLists();
 };
 
 window.saveCurrentAnimation = () => {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
   if (!auth) return showToast('Log in to save animations!');
   if (!currentWord) return showToast('Animate something first!');
 
@@ -659,7 +659,7 @@ window.saveCurrentAnimation = () => {
 };
 
 function renderSavedList() {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
   const wrap = document.getElementById('saved-list-wrap');
   const list = document.getElementById('saved-items');
   if (!auth || !wrap) return;
@@ -692,7 +692,7 @@ function renderSavedList() {
 }
 
 function applyAuthState() {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
   document.body.classList.remove('logged-in', 'is-teacher', 'is-admin', 'is-student');
   if (auth) {
     document.body.classList.add('logged-in');
@@ -704,7 +704,7 @@ function applyAuthState() {
 }
 
 function checkAuth() {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
+  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
   const isPublicView = location.hash.startsWith('#animate/');
   if (!auth && !isPublicView) {
     showView('login');
