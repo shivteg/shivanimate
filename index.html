@@ -263,6 +263,7 @@ body.is-teacher .teacher-only { display: flex; }
   <div class="nav-actions">
     <button class="btn-text auth-only admin-only" onclick="showView('teacher')">Admin Dashboard</button>
     <button class="btn-text auth-only teacher-only" onclick="showView('teacher')">Teacher Dashboard</button>
+    <button class="btn-text auth-only" onclick="window.open('portfolio.html','_blank')" style="color:var(--accent2)">My Portfolio ↗</button>
     <button class="btn-text auth-only" onclick="logout()">Logout</button>
     <button class="btn-icon" id="theme-btn" aria-label="Toggle theme">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -272,7 +273,7 @@ body.is-teacher .teacher-only { display: flex; }
 
 <div id="view-login" class="view view-login">
   <div class="login-card">
-    <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SYSTEM UPDATE V2.2 LIVE ✓</div>
+    <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SYSTEM STABILITY UPDATE V2.3 LIVE ✓</div>
     <h2>Welcome Back</h2>
     <div class="login-form">
       <input type="text" id="login-user" placeholder="Username" autocomplete="username">
@@ -461,7 +462,7 @@ body.is-teacher .teacher-only { display: flex; }
 </div>
 </div>
 <div class="toast" id="toast"></div>
-<footer style="position:fixed; bottom:10px; right:10px; font-size:9px; color:var(--faint); font-family:monospace; pointer-events:none; z-index:100;">SHIVANIMATE CORE V2.2 • PERMANENT ACCESS ACTIVE</footer>
+<footer style="position:fixed; bottom:10px; right:10px; font-size:9px; color:var(--faint); font-family:monospace; pointer-events:none; z-index:100;">SHIVANIMATE CORE V2.3 • SYSTEM STABILITY ACTIVE</footer>
 
 <script type="importmap">
 {
@@ -476,7 +477,6 @@ body.is-teacher .teacher-only { display: flex; }
   window.onerror = function(msg, url, line) {
     const err = "Error: " + msg + " at " + line;
     console.error(err);
-    alert(err);
   };
 </script>
 <script type="module">
@@ -487,6 +487,12 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+// ── UTILS ──
+function safeParse(str, fallback) {
+  try { return str ? JSON.parse(str) : fallback; }
+  catch (e) { return fallback; }
+}
 
 // ── AUTH LOGIC ──
 const ADMIN = { 'shivteg': 'teg2172014' };
@@ -500,7 +506,7 @@ function getTeachers() {
     'Drishti': 'drishti.school',
     'drishti': 'drishti.school'
   };
-  return { ...defaults, ...JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}') };
+  return { ...defaults, ...safeParse(localStorage.getItem('shivanimate_teachers'), {}) };
 }
 
 function getStudents() {
@@ -515,12 +521,12 @@ function getStudents() {
     'Shivteg': '00',
     'shivteg': '00'
   };
-  return { ...defaults, ...JSON.parse(localStorage.getItem('shivanimate_students') || '{}') };
+  return { ...defaults, ...safeParse(localStorage.getItem('shivanimate_students'), {}) };
 }
 
 window.exportPermanentRecord = () => {
-  const teachers = JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}');
-  const students = JSON.parse(localStorage.getItem('shivanimate_students') || '{}');
+  const teachers = safeParse(localStorage.getItem('shivanimate_teachers'), {});
+  const students = safeParse(localStorage.getItem('shivanimate_students'), {});
   const record = { teachers, students };
   const blob = new Blob([JSON.stringify(record, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -574,7 +580,7 @@ window.addTeacher = () => {
   // MANDATORY VERIFICATION MESSAGE
   alert('⚠️ VERIFICATION REQUIRED\n\nto add student or teacher it needs to be verified to verify do whatsapp message on - 8054830509');
 
-  const teachers = JSON.parse(localStorage.getItem('shivanimate_teachers') || '{}');
+  const teachers = safeParse(localStorage.getItem('shivanimate_teachers'), {});
   teachers[user] = pass;
   localStorage.setItem('shivanimate_teachers', JSON.stringify(teachers));
   
@@ -593,7 +599,7 @@ window.addStudent = () => {
   // MANDATORY VERIFICATION MESSAGE
   alert('⚠️ VERIFICATION REQUIRED\n\nto add student or teacher it needs to be verified to verify do whatsapp message on - 8054830509');
 
-  const students = JSON.parse(localStorage.getItem('shivanimate_students') || '{}');
+  const students = safeParse(localStorage.getItem('shivanimate_students'), {});
   students[user] = pass;
   localStorage.setItem('shivanimate_students', JSON.stringify(students));
   
@@ -604,7 +610,7 @@ window.addStudent = () => {
 };
 
 function renderUserLists() {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
+  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
   const students = getStudents();
   const teachers = getTeachers();
   
@@ -640,11 +646,11 @@ window.removeUser = (type, user) => {
 };
 
 window.saveCurrentAnimation = () => {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
+  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
   if (!auth) return showToast('Log in to save animations!');
   if (!currentWord) return showToast('Animate something first!');
 
-  const allSaved = JSON.parse(localStorage.getItem('shivanimate_saved') || '{}');
+  const allSaved = safeParse(localStorage.getItem('shivanimate_saved'), {});
   if (!allSaved[auth.user]) allSaved[auth.user] = [];
   
   const entry = { word: currentWord, style: currentStyle, date: new Date().toISOString() };
@@ -659,12 +665,12 @@ window.saveCurrentAnimation = () => {
 };
 
 function renderSavedList() {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
+  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
   const wrap = document.getElementById('saved-list-wrap');
   const list = document.getElementById('saved-items');
   if (!auth || !wrap) return;
 
-  const allSaved = JSON.parse(localStorage.getItem('shivanimate_saved') || '{}');
+  const allSaved = safeParse(localStorage.getItem('shivanimate_saved'), {});
   const userSaved = allSaved[auth.user] || [];
   
   if (userSaved.length > 0) {
@@ -692,7 +698,7 @@ function renderSavedList() {
 }
 
 function applyAuthState() {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
+  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
   document.body.classList.remove('logged-in', 'is-teacher', 'is-admin', 'is-student');
   if (auth) {
     document.body.classList.add('logged-in');
@@ -704,7 +710,7 @@ function applyAuthState() {
 }
 
 function checkAuth() {
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth') || 'null');
+  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
   const isPublicView = location.hash.startsWith('#animate/');
   if (!auth && !isPublicView) {
     showView('login');
@@ -712,6 +718,29 @@ function checkAuth() {
   }
   return true;
 }
+
+window.showView=(name)=>{
+  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
+  
+  // STRICT STUDENT BLOCK
+  if (name === 'teacher' && auth && auth.role === 'student') {
+    showToast('ACCESS DENIED: Dashboard is for teachers only.');
+    return;
+  }
+  
+  if (name !== 'login' && name !== 'public' && !checkAuth()) return;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el = document.getElementById('view-'+name);
+  if (el) el.classList.add('active');
+  if (name === 'teacher') renderUserLists();
+};
+
+window.showToast=(msg)=>{
+  const t=document.getElementById('toast');
+  if (!t) return;
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+};
 
 // ── STATE ──
 let currentWord='', currentStyle='pop';
@@ -750,7 +779,7 @@ document.getElementById('theme-btn').addEventListener('click',()=>{
 // ── INPUT ──
 window.onWordInput=()=>{
   const inp=document.getElementById('word-input');
-  const v=inp.value.replace(/[^a-zA-Z0-9]/g,'').slice(0,9);
+  const v=inp.value.replace(/[^a-zA-Z0-9 ]/g,'').slice(0,9);
   inp.value=v;
   const cc=document.getElementById('cc');
   cc.textContent=v.length+'/9';
@@ -762,25 +791,10 @@ window.selectStyle=(el,style)=>{
   if(currentWord) animateWord();
 };
 window.replayAnimation=()=>{ if(currentWord){document.getElementById('word-input').value=currentWord; animateWord();} };
-window.showView=(name)=>{
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
-  
-  // STRICT STUDENT BLOCK
-  if (name === 'teacher' && auth && auth.role === 'student') {
-    showToast('ACCESS DENIED: Dashboard is for teachers only.');
-    return;
-  }
-  
-  if (name !== 'login' && name !== 'public' && !checkAuth()) return;
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const el = document.getElementById('view-'+name);
-  if (el) el.classList.add('active');
-  if (name === 'teacher') renderUserLists();
-};
 
 // ── SOCIAL SHARE HELPERS ──
 function buildShareUrl(word, style) {
-  return location.origin + location.pathname + '#animate/' + word + '/' + style;
+  return location.origin + location.pathname + '#animate/' + encodeURIComponent(word) + '/' + style;
 }
 function buildShareLinks(url, word) {
   const text = encodeURIComponent('Check out my animated word "' + word + '" in 3D! ✨ Made with ShivAnimate');
@@ -819,7 +833,6 @@ window.copyForInstagram=()=>{
   const caption='✨ I just animated "' + currentWord + '" in 3D! Check it out → ' + url + ' \n\n#ShivAnimate #3D #Animation #WordArt #Reel';
   navigator.clipboard.writeText(caption).then(()=>{
     showToast('📱 Caption + link copied! Paste into your Instagram Reel caption.');
-    document.getElementById('share-ig').textContent=''; 
     document.getElementById('share-ig').innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg> ✓ Copied!';
     setTimeout(()=>{ document.getElementById('share-ig').innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg> Copy for Reel';},3000);
   }).catch(()=>showToast('Copy manually: '+caption));
@@ -948,7 +961,7 @@ function buildLetters(word,style,scene){
 
 window.animateWord=async()=>{
   const inp=document.getElementById('word-input');
-  const word=inp.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9);
+  const word=inp.value.trim().toUpperCase().replace(/[^A-Z0-9 ]/g,'').slice(0,9);
   if(!word){showToast('Type a word first!');return;}
   if(!loadedFont){
     showToast('Loading 3D font...');
@@ -967,7 +980,7 @@ window.animateWord=async()=>{
   document.getElementById('share-url-text').textContent=shareUrl;
   document.getElementById('share-section').classList.add('show');
   setShareLinks(shareUrl,word);
-  history.replaceState(null,'','#animate/'+word+'/'+currentStyle);
+  history.replaceState(null,'','#animate/'+encodeURIComponent(word)+'/'+currentStyle);
   if(!animating) startLoop(canvas);
 };
 
@@ -1170,6 +1183,7 @@ window.showPublicView=async(word,style)=>{
     try{await loadFont();}catch(e){showToast('Could not load the 3D font. Try again online.');return;}
   }
   const canvas=document.getElementById('pub-canvas');
+  if (!canvas) return;
   const W=canvas.clientWidth,H=canvas.clientHeight||380;
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -1188,11 +1202,11 @@ window.showPublicView=async(word,style)=>{
   composer.addPass(new RenderPass(scene,camera));
   composer.addPass(new UnrealBloomPass(new THREE.Vector2(W,H),1.0,.6,.15));
   const grid=new THREE.GridHelper(40,30,0x333355,0x222244); grid.position.y=-3.5; scene.add(grid);
-  const meshes=buildLetters(word.toUpperCase(),style,scene);
-  const shareUrl=buildShareUrl(word.toUpperCase(),style);
-  setPubShareLinks(shareUrl,word.toUpperCase());
+  const meshes=buildLetters(decodeURIComponent(word).toUpperCase(),style,scene);
+  const shareUrl=buildShareUrl(decodeURIComponent(word).toUpperCase(),style);
+  setPubShareLinks(shareUrl,decodeURIComponent(word).toUpperCase());
   const ig=document.getElementById('pub-share-ig');
-  ig.dataset.url=shareUrl; ig.dataset.word=word.toUpperCase();
+  if (ig) { ig.dataset.url=shareUrl; ig.dataset.word=decodeURIComponent(word).toUpperCase(); }
   const clock2=new THREE.Clock();
   let pmx=0,pmy=0,ptx=0,pty=0;
   
@@ -1220,7 +1234,7 @@ window.showPublicView=async(word,style)=>{
 };
 
 window.goHome=(e)=>{
-  e.preventDefault();
+  if (e) e.preventDefault();
   history.replaceState(null,'',location.pathname);
   showView('animate');
   currentWord=''; document.getElementById('word-input').value='';
@@ -1229,30 +1243,14 @@ window.goHome=(e)=>{
   pubAnimating=false;
 };
 
-window.showToast=(msg)=>{
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
+window.goHomeDirect=()=>{
+  history.replaceState(null,'',location.pathname);
+  showView('animate');
+  currentWord=''; document.getElementById('word-input').value='';
+  document.getElementById('cc').textContent='0/9';
+  animating=false;
+  pubAnimating=false;
 };
-
-// ── ROUTE ──
-function handleRoute(){
-  const hash=location.hash;
-  if(hash.startsWith('#animate/')){
-    const p=hash.split('/');
-    const word=(p[1]||'').toUpperCase().slice(0,9);
-    const rawStyle=p[2]||'pop';
-    const style=STYLE_COLORS[rawStyle]?rawStyle:'pop';
-    if(word){showPublicView(word,style);return;}
-  }
-  
-  const auth = JSON.parse(localStorage.getItem('shivanimate_auth'));
-  if (auth) {
-    showView('animate');
-  } else {
-    showView('login');
-  }
-}
 
 applyAuthState();
 window.addEventListener('hashchange',handleRoute);
