@@ -468,7 +468,8 @@ body.is-teacher .teacher-only { display: flex; }
 {
   "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/",
+    "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/+esm"
   }
 }
 </script>
@@ -488,195 +489,266 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
+import { createClient } from '@supabase/supabase-js';
+
 // ── UTILS ──
 function safeParse(str, fallback) {
   try { return str ? JSON.parse(str) : fallback; }
   catch (e) { return fallback; }
 }
 
-// ── AUTH LOGIC ──
-const ADMIN = { 'shivteg': 'teg2172014' };
+// ── SUPABASE CONFIG ──
+let supabase;
+let currentUser = null;
 
-function getTeachers() {
-  const defaults = { 
-    'aditi': 'aditi_arora',
-    'shivteg': '00#', 
-    'lottie': '12345678#', 
-    'gungun': '12345', 
-    'Drishti': 'drishti.school',
-    'drishti': 'drishti.school'
-  };
-  return { ...defaults, ...safeParse(localStorage.getItem('shivanimate_teachers'), {}) };
+function handleRoute() {
+  const hash = location.hash;
+  if (hash.startsWith('#animate/')) {
+    const parts = hash.split('/');
+    if (parts.length >= 3) {
+      showPublicView(parts[1], parts[2]);
+    }
+  } else if (!currentUser) {
+    showView('login');
+  } else {
+    showView('animate');
+  }
 }
 
-function getStudents() {
-  const defaults = { 
-    's 1': '00',
-    'st. 3': '00',
-    's0111': '00',
-    's1': '00',
-    'parneet': 'parneet', 
-    'Ravi': '00', 
-    'ravi': '00',
-    'Shivteg': '00',
-    'shivteg': '00'
-  };
-  return { ...defaults, ...safeParse(localStorage.getItem('shivanimate_students'), {}) };
+async function initSupabase() {
+  try {
+    const res = await fetch('/api/config');
+    const config = await res.json();
+    if (!config.supabaseUrl || !config.supabaseAnonKey) {
+      console.warn("Supabase keys missing. Ensure environment variables are set in Vercel.");
+      return;
+    }
+    supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
+    
+    // Check initial session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      await fetchAndApplyProfile();
+    }
+    
+    applyAuthState();
+    handleRoute(); // Re-run routing after auth is ready
+  } catch (e) {
+    console.error("Supabase Init Error:", e);
+  }
+}
+initSupabase();
+
+async function fetchAndApplyProfile() {
+  if (!currentUser) return;
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', currentUser.id)
+    .single();
+  
+  if (profile) {
+    currentUser.profile = profile;
+  }
 }
 
-window.exportPermanentRecord = () => {
-  const teachers = safeParse(localStorage.getItem('shivanimate_teachers'), {});
-  const students = safeParse(localStorage.getItem('shivanimate_students'), {});
-  const record = { teachers, students };
+window.exportPermanentRecord = async () => {
+  if (!supabase) return;
+  const { data: profiles, error } = await supabase.from('profiles').select('*');
+  if (error) return showToast('Export failed: ' + error.message);
+  
+  const record = { 
+    profiles: profiles,
+    exportedAt: new Date().toISOString()
+  };
+  
   const blob = new Blob([JSON.stringify(record, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'shivanimate_record.json';
+  a.download = 'shivanimate_supabase_record.json';
   a.click();
-  showToast('Record exported! Send this to the AI to make it permanent. ✦');
+  showToast('Record exported! ✦');
 };
 
-window.login = () => {
-  const userInput = document.getElementById('login-user').value.trim();
+// ── AUTH LOGIC ──
+window.login = async () => {
+  const username = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value.trim();
-  const teachers = getTeachers();
-  const students = getStudents();
+  
+  if (!username || !pass) return showToast('Enter credentials.');
 
-  let role = null;
-  let user = userInput;
+  // We use a dummy email format for username-based login
+  const email = `${username.toLowerCase().replace(/\s+/g, '_')}@shivanimate.local`;
 
-  if (ADMIN[userInput] === pass) {
-    role = 'admin';
-  } else if (teachers[userInput] === pass) {
-    role = 'teacher';
-  } else if (students[userInput] === pass) {
-    role = 'student';
-  }
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: pass
+  });
 
-  if (role) {
-    localStorage.setItem('shivanimate_auth', JSON.stringify({ user, role }));
+  if (error) {
+    showToast('Login failed: ' + error.message);
+  } else {
+    currentUser = data.user;
+    await fetchAndApplyProfile();
     applyAuthState();
     showView('animate');
-    showToast('Welcome, ' + user + '! ✦');
-  } else {
-    showToast('Invalid username or password.');
+    showToast('Welcome back, ' + (currentUser.profile?.username || username) + '! ✦');
   }
 };
 
-window.logout = () => {
-  localStorage.removeItem('shivanimate_auth');
+window.logout = async () => {
+  await supabase.auth.signOut();
+  currentUser = null;
   applyAuthState();
   showView('login');
   showToast('Logged out safely.');
 };
 
-window.addTeacher = () => {
+window.addTeacher = async () => {
   const user = document.getElementById('new-teacher-user').value.trim();
   const pass = document.getElementById('new-teacher-pass').value.trim();
   
   if (!user || !pass) return showToast('Enter both username and password.');
+  alert('⚠️ VERIFICATION REQUIRED: Verification request sent to admin.');
 
-  // MANDATORY VERIFICATION MESSAGE
-  alert('⚠️ VERIFICATION REQUIRED\n\nto add student or teacher it needs to be verified to verify do whatsapp message on - 8054830509');
+  const res = await fetch('/api/admin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'addUser', username: user, password: pass, role: 'teacher' })
+  });
+  const data = await res.json();
 
-  const teachers = safeParse(localStorage.getItem('shivanimate_teachers'), {});
-  teachers[user] = pass;
-  localStorage.setItem('shivanimate_teachers', JSON.stringify(teachers));
-  
-  document.getElementById('new-teacher-user').value = '';
-  document.getElementById('new-teacher-pass').value = '';
-  renderUserLists();
-  showToast('Teacher "' + user + '" added! ✦');
+  if (res.ok) {
+    document.getElementById('new-teacher-user').value = '';
+    document.getElementById('new-teacher-pass').value = '';
+    renderUserLists();
+    showToast('Teacher "' + user + '" added! ✦');
+  } else {
+    showToast('Error: ' + data.error);
+  }
 };
 
-window.addStudent = () => {
+window.addStudent = async () => {
   const user = document.getElementById('new-student-user').value.trim();
   const pass = document.getElementById('new-student-pass').value.trim();
 
   if (!user || !pass) return showToast('Enter both username and password.');
+  alert('⚠️ VERIFICATION REQUIRED: Verification request sent to admin.');
 
-  // MANDATORY VERIFICATION MESSAGE
-  alert('⚠️ VERIFICATION REQUIRED\n\nto add student or teacher it needs to be verified to verify do whatsapp message on - 8054830509');
+  const res = await fetch('/api/admin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'addUser', username: user, password: pass, role: 'student' })
+  });
+  const data = await res.json();
 
-  const students = safeParse(localStorage.getItem('shivanimate_students'), {});
-  students[user] = pass;
-  localStorage.setItem('shivanimate_students', JSON.stringify(students));
-  
-  document.getElementById('new-student-user').value = '';
-  document.getElementById('new-student-pass').value = '';
-  renderUserLists();
-  showToast('Student "' + user + '" added! ✦');
+  if (res.ok) {
+    document.getElementById('new-student-user').value = '';
+    document.getElementById('new-student-pass').value = '';
+    renderUserLists();
+    showToast('Student "' + user + '" added! ✦');
+  } else {
+    showToast('Error: ' + data.error);
+  }
 };
 
-function renderUserLists() {
-  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
-  const students = getStudents();
-  const teachers = getTeachers();
+async function renderUserLists() {
+  if (!currentUser || currentUser.profile?.role === 'student') return;
   
   const sList = document.getElementById('student-list');
+  const tList = document.getElementById('teacher-list');
+
+  // Fetch all profiles
+  const { data: profiles, error } = await supabase.from('profiles').select('*');
+  if (error) return console.error(error);
+
   if (sList) {
-    sList.innerHTML = Object.keys(students).length ? '' : '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
-    for (const user in students) {
+    const students = profiles.filter(p => p.role === 'student');
+    sList.innerHTML = students.length ? '' : '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
+    students.forEach(p => {
       const item = document.createElement('div');
       item.className = 'student-item';
-      item.innerHTML = `<span>${user}</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('students','${user}')">Remove</button>`;
+      item.innerHTML = `<span>${p.username}</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('${p.username}')">Remove</button>`;
       sList.appendChild(item);
-    }
+    });
   }
 
-  const tList = document.getElementById('teacher-list');
-  if (tList) {
+  if (tList && currentUser.profile?.role === 'admin') {
+    const teachers = profiles.filter(p => p.role === 'teacher');
     tList.innerHTML = '';
-    for (const user in teachers) {
-      if (ADMIN[user]) continue;
+    teachers.forEach(p => {
       const item = document.createElement('div');
       item.className = 'student-item';
-      item.innerHTML = `<span>${user} (Teacher)</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('teachers','${user}')">Remove</button>`;
+      item.innerHTML = `<span>${p.username} (Teacher)</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('${p.username}')">Remove</button>`;
       tList.appendChild(item);
-    }
+    });
   }
 }
 
-window.removeUser = (type, user) => {
-  const data = type === 'teachers' ? getTeachers() : getStudents();
-  delete data[user];
-  localStorage.setItem('shivanimate_' + type, JSON.stringify(data));
-  renderUserLists();
+window.removeUser = async (username) => {
+  if (!confirm(`Are you sure you want to remove ${username}?`)) return;
+
+  const res = await fetch('/api/admin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'removeUser', username })
+  });
+  const data = await res.json();
+
+  if (res.ok) {
+    renderUserLists();
+    showToast('User removed successfully.');
+  } else {
+    showToast('Error: ' + data.error);
+  }
 };
 
-window.saveCurrentAnimation = () => {
-  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
-  if (!auth) return showToast('Log in to save animations!');
+window.saveCurrentAnimation = async () => {
+  if (!currentUser) return showToast('Log in to save animations!');
   if (!currentWord) return showToast('Animate something first!');
 
-  const allSaved = safeParse(localStorage.getItem('shivanimate_saved'), {});
-  if (!allSaved[auth.user]) allSaved[auth.user] = [];
-  
-  const entry = { word: currentWord, style: currentStyle, date: new Date().toISOString() };
-  if (allSaved[auth.user].find(e => e.word === entry.word && e.style === entry.style)) {
-    return showToast('Already saved! ✦');
-  }
+  // Check if already exists
+  const { data: existing } = await supabase
+    .from('animations')
+    .select('id')
+    .eq('user_id', currentUser.id)
+    .eq('word', currentWord)
+    .eq('style', currentStyle)
+    .single();
 
-  allSaved[auth.user].push(entry);
-  localStorage.setItem('shivanimate_saved', JSON.stringify(allSaved));
-  renderSavedList();
-  showToast('Animation saved to your record! ✦');
+  if (existing) return showToast('Already saved! ✦');
+
+  const { error } = await supabase
+    .from('animations')
+    .insert([{ user_id: currentUser.id, word: currentWord, style: currentStyle }]);
+
+  if (error) {
+    showToast('Save failed: ' + error.message);
+  } else {
+    renderSavedList();
+    showToast('Animation saved to your record! ✦');
+  }
 };
 
-function renderSavedList() {
-  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
+async function renderSavedList() {
   const wrap = document.getElementById('saved-list-wrap');
   const list = document.getElementById('saved-items');
-  if (!auth || !wrap) return;
+  if (!currentUser || !wrap) return;
 
-  const allSaved = safeParse(localStorage.getItem('shivanimate_saved'), {});
-  const userSaved = allSaved[auth.user] || [];
+  const { data: saved, error } = await supabase
+    .from('animations')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  if (error) return;
   
-  if (userSaved.length > 0) {
+  if (saved && saved.length > 0) {
     wrap.style.display = 'flex';
     list.innerHTML = '';
-    userSaved.forEach((entry, idx) => {
+    saved.forEach((entry) => {
       const btn = document.createElement('button');
       btn.className = 'chip';
       btn.style.fontSize = '10px';
@@ -698,48 +770,47 @@ function renderSavedList() {
 }
 
 function applyAuthState() {
-  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
   document.body.classList.remove('logged-in', 'is-teacher', 'is-admin', 'is-student');
-  if (auth) {
+  if (currentUser) {
     document.body.classList.add('logged-in');
-    if (auth.role === 'admin') document.body.classList.add('is-admin');
-    if (auth.role === 'teacher') document.body.classList.add('is-teacher');
-    if (auth.role === 'student') document.body.classList.add('is-student');
+    const role = currentUser.profile?.role;
+    if (role === 'admin') document.body.classList.add('is-admin');
+    if (role === 'teacher') document.body.classList.add('is-teacher');
+    if (role === 'student') document.body.classList.add('is-student');
     renderSavedList();
   }
 }
 
 function checkAuth() {
-  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
   const isPublicView = location.hash.startsWith('#animate/');
-  if (!auth && !isPublicView) {
+  if (!currentUser && !isPublicView) {
     showView('login');
     return false;
   }
   return true;
 }
 
-window.showView=(name)=>{
-  const auth = safeParse(localStorage.getItem('shivanimate_auth'), null);
+window.showView = (name) => {
+  const role = currentUser?.profile?.role;
   
   // STRICT STUDENT BLOCK
-  if (name === 'teacher' && auth && auth.role === 'student') {
+  if (name === 'teacher' && role === 'student') {
     showToast('ACCESS DENIED: Dashboard is for teachers only.');
     return;
   }
   
   if (name !== 'login' && name !== 'public' && !checkAuth()) return;
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const el = document.getElementById('view-'+name);
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById('view-' + name);
   if (el) el.classList.add('active');
   if (name === 'teacher') renderUserLists();
 };
 
-window.showToast=(msg)=>{
-  const t=document.getElementById('toast');
+window.showToast = (msg) => {
+  const t = document.getElementById('toast');
   if (!t) return;
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
 };
 
 // ── STATE ──

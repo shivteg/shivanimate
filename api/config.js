@@ -1,4 +1,7 @@
-// Auth removed — this endpoint is no longer used.
-export default function handler(req,res){
-  res.status(200).json({message:'Auth has been removed from ShivAnimate.'});
+
+export default function handler(req, res) {
+  res.status(200).json({
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  });
 }
