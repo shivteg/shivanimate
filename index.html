@@ -234,6 +234,92 @@ body.is-teacher .teacher-only { display: flex; }
 .pub-try{margin-top:var(--sp6);font-size:var(--text-sm);color:var(--muted);}
 .pub-try a{color:var(--primary);text-decoration:none;font-weight:600;}
 .pub-try a:hover{text-decoration:underline;}
+
+/* PUZZLE */
+#view-puzzle {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sp8) var(--sp4);
+}
+.puzzle-container {
+  width: 100%;
+  max-width: 600px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp6);
+  box-shadow: var(--sh-lg);
+  text-align: center;
+}
+.puzzle-grid {
+  display: grid;
+  gap: 4px;
+  margin: var(--sp6) auto;
+  aspect-ratio: 16/9; /* Adjusted later by JS if needed */
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  max-width: 100%;
+}
+.puzzle-piece {
+  background-size: 600px auto; /* Matches container max-width */
+  cursor: pointer;
+  border-radius: 2px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.puzzle-piece:hover {
+  transform: scale(1.02);
+  z-index: 10;
+  box-shadow: 0 0 15px var(--primary);
+}
+.puzzle-piece.selected {
+  outline: 3px solid var(--accent);
+  transform: scale(1.05);
+  z-index: 11;
+}
+.puzzle-controls {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp4);
+  margin-bottom: var(--sp6);
+  flex-wrap: wrap;
+}
+.puzzle-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sp4);
+  font-family: var(--f-display);
+}
+.timer {
+  font-size: var(--text-lg);
+  color: var(--accent2);
+}
+.level-badge {
+  padding: 4px 12px;
+  background: var(--surface-off);
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  font-size: var(--text-xs);
+  color: var(--primary);
+}
+.puzzle-win {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+.puzzle-win.show { display: flex; }
+.puzzle-win h2 { font-size: var(--text-2xl); color: var(--accent); margin-bottom: var(--sp4); }
+
 .toast{position:fixed;bottom:var(--sp6);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);padding:var(--sp2) var(--sp6);font-size:var(--text-sm);font-weight:500;box-shadow:var(--sh-md);z-index:999;opacity:0;transition:all .3s ease;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 @media(max-width:600px){
@@ -261,6 +347,7 @@ body.is-teacher .teacher-only { display: flex; }
     <span><span class="p">Shiv</span><span class="c">Animate</span></span>
   </div>
   <div class="nav-actions">
+    <button class="btn-text" onclick="showView('puzzle')" style="color:var(--accent)">🧩 Solve the Puzzle</button>
     <button class="btn-text auth-only admin-only" onclick="showView('teacher')">Admin Dashboard</button>
     <button class="btn-text auth-only teacher-only" onclick="showView('teacher')">Teacher Dashboard</button>
     <button class="btn-text auth-only" onclick="window.open('portfolio.html','_blank')" style="color:var(--accent2)">My Portfolio ↗</button>
@@ -270,6 +357,44 @@ body.is-teacher .teacher-only { display: flex; }
     </button>
   </div>
 </nav>
+
+<div id="view-puzzle" class="view">
+  <div class="puzzle-container">
+    <div class="hero" style="margin-bottom: var(--sp6);">
+      <div class="hero-kicker">Brain Exercise</div>
+      <h1>Solve the Puzzle</h1>
+      <p>Put the picture back together! 🧩</p>
+    </div>
+
+    <div class="puzzle-controls">
+      <button class="chip active" onclick="startPuzzle(1)">Level 1 (3x3)</button>
+      <button class="chip" onclick="startPuzzle(2)">Level 2 (4x4)</button>
+      <button class="chip" onclick="startPuzzle(3)">Level 3 (5x5)</button>
+    </div>
+
+    <div class="puzzle-stats">
+      <span class="level-badge" id="puzzle-level-display">Level 1</span>
+      <span class="timer" id="puzzle-timer">00:00</span>
+    </div>
+
+    <div id="puzzle-grid" class="puzzle-grid">
+      <!-- Puzzle pieces injected by JS -->
+    </div>
+
+    <div style="margin-top: var(--sp8);">
+      <button class="btn-text" onclick="showView('animate')">← Back to Animate</button>
+    </div>
+  </div>
+</div>
+
+<div class="puzzle-win" id="puzzle-win">
+  <div class="login-card" style="background: var(--surface-2);">
+    <div style="font-size: 40px; margin-bottom: 20px;">🏆</div>
+    <h2>Amazing Job!</h2>
+    <p style="color: var(--muted); margin-bottom: 30px;">You solved the puzzle in <span id="win-time" style="color: var(--accent2); font-weight: 800;"></span>!</p>
+    <button class="btn-go" onclick="closeWin()">Play Again ✦</button>
+  </div>
+</div>
 
 <div id="view-login" class="view view-login">
   <div class="login-card">
@@ -517,6 +642,154 @@ function safeParse(str, fallback) {
   catch (e) { return fallback; }
 }
 
+// ── GLOBAL HELPERS ──
+window.showView = (id) => {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('view-' + id);
+  if (target) {
+    target.classList.add('active');
+    if (id === 'puzzle') startPuzzle(1);
+    else stopPuzzle();
+  }
+};
+
+window.applyAuthState = () => {
+  document.body.classList.add('logged-in');
+  const role = currentUser?.profile?.role || 'student';
+  document.body.classList.toggle('is-admin', role === 'admin');
+  document.body.classList.toggle('is-teacher', role === 'teacher' || role === 'admin');
+};
+
+// ── PUZZLE LOGIC ──
+let puzzleLevel = 1;
+let puzzleTimerInterval = null;
+let puzzleSeconds = 0;
+let selectedPiece = null;
+const PUZZLE_IMG = 'Screenshot (32).png';
+
+window.startPuzzle = (level) => {
+  puzzleLevel = level;
+  puzzleSeconds = 0;
+  selectedPiece = null;
+  document.getElementById('puzzle-level-display').textContent = `Level ${level}`;
+  document.querySelectorAll('.puzzle-controls .chip').forEach((c, i) => {
+    c.classList.toggle('active', i + 1 === level);
+  });
+  
+  const size = level === 1 ? 3 : (level === 2 ? 4 : 5);
+  initPuzzleGrid(size);
+  startTimer();
+};
+
+function initPuzzleGrid(size) {
+  const grid = document.getElementById('puzzle-grid');
+  grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+  grid.innerHTML = '';
+  
+  let pieces = [];
+  for (let i = 0; i < size * size; i++) pieces.push(i);
+  
+  // Shuffle until it's not the original order
+  do {
+    for (let i = pieces.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
+    }
+  } while (pieces.every((p, i) => p === i));
+  
+  pieces.forEach((correctPos, currentIndex) => {
+    const piece = document.createElement('div');
+    piece.className = 'puzzle-piece';
+    piece.dataset.currentIndex = currentIndex; 
+    piece.dataset.correctIndex = correctPos; 
+    
+    const row = Math.floor(correctPos / size);
+    const col = correctPos % size;
+    
+    const percentX = (col / (size - 1)) * 100;
+    const percentY = (row / (size - 1)) * 100;
+    
+    piece.style.backgroundImage = `url("${PUZZLE_IMG}")`;
+    piece.style.backgroundPosition = `${percentX}% ${percentY}%`;
+    piece.style.backgroundSize = `${size * 100}% auto`;
+    
+    piece.onclick = () => onPieceClick(piece);
+    grid.appendChild(piece);
+  });
+}
+
+function onPieceClick(piece) {
+  if (selectedPiece === null) {
+    selectedPiece = piece;
+    piece.classList.add('selected');
+  } else {
+    if (selectedPiece === piece) {
+      piece.classList.remove('selected');
+      selectedPiece = null;
+      return;
+    }
+    
+    swapPieces(selectedPiece, piece);
+    selectedPiece.classList.remove('selected');
+    selectedPiece = null;
+    checkWin();
+  }
+}
+
+function swapPieces(p1, p2) {
+  const bgPos1 = p1.style.backgroundPosition;
+  const correctIdx1 = p1.dataset.correctIndex;
+  
+  p1.style.backgroundPosition = p2.style.backgroundPosition;
+  p1.dataset.correctIndex = p2.dataset.correctIndex;
+  
+  p2.style.backgroundPosition = bgPos1;
+  p2.dataset.correctIndex = correctIdx1;
+}
+
+function checkWin() {
+  const pieces = document.querySelectorAll('.puzzle-piece');
+  let win = true;
+  pieces.forEach(p => {
+    if (parseInt(p.dataset.currentIndex) !== parseInt(p.dataset.correctIndex)) win = false;
+  });
+  
+  if (win) {
+    stopTimer();
+    document.getElementById('win-time').textContent = formatTime(puzzleSeconds);
+    document.getElementById('puzzle-win').classList.add('show');
+  }
+}
+
+function startTimer() {
+  stopTimer();
+  puzzleSeconds = 0;
+  document.getElementById('puzzle-timer').textContent = '00:00';
+  puzzleTimerInterval = setInterval(() => {
+    puzzleSeconds++;
+    document.getElementById('puzzle-timer').textContent = formatTime(puzzleSeconds);
+  }, 1000);
+}
+
+function stopTimer() {
+  if (puzzleTimerInterval) clearInterval(puzzleTimerInterval);
+}
+
+function formatTime(s) {
+  const mins = Math.floor(s / 60);
+  const secs = s % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+window.closeWin = () => {
+  document.getElementById('puzzle-win').classList.remove('show');
+  startPuzzle(puzzleLevel);
+};
+
+function stopPuzzle() {
+  stopTimer();
+}
+
 // ── SUPABASE CONFIG ──
 let supabase;
 let currentUser = null;
@@ -527,12 +800,16 @@ function handleRoute() {
     const parts = hash.split('/');
     if (parts.length >= 3) {
       showPublicView(parts[1], parts[2]);
+      return;
     }
-  } else if (hash === '#signup') {
+  }
+  
+  if (hash === '#signup') {
     showView('signup');
-  } else if (!currentUser) {
-    showView('login');
+  } else if (hash === '#puzzle') {
+    showView('puzzle');
   } else {
+    // Directly launch the animate view, bypassing login wall
     showView('animate');
   }
 }
@@ -542,7 +819,9 @@ async function initSupabase() {
     const res = await fetch('/api/config');
     const config = await res.json();
     if (!config.supabaseUrl || !config.supabaseAnonKey) {
-      console.warn("Supabase keys missing. Ensure environment variables are set in Vercel.");
+      console.warn("Supabase keys missing. Site will still function in guest mode.");
+      applyAuthState();
+      handleRoute();
       return;
     }
     supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
@@ -558,6 +837,8 @@ async function initSupabase() {
     handleRoute(); // Re-run routing after auth is ready
   } catch (e) {
     console.error("Supabase Init Error:", e);
+    applyAuthState();
+    handleRoute();
   }
 }
 initSupabase();
