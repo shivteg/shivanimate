@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   const { action, username, password, role, requesterAuth } = req.body;
 
   // Basic security check: Only allow certain actions
-  if (!['addUser', 'removeUser'].includes(action)) {
+  if (!['addUser', 'removeUser', 'approveUser'].includes(action)) {
     return res.status(400).json({ error: 'Invalid action' });
   }
 
@@ -31,14 +31,24 @@ export default async function handler(req, res) {
 
       if (authError) throw authError;
 
-      // 2. Add to profiles table
+      // 2. Add to profiles table - Manually added users are approved by default
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert([{ id: authData.user.id, username, role }]);
+        .insert([{ id: authData.user.id, username, role, is_approved: true }]);
 
       if (profileError) throw profileError;
 
       return res.status(200).json({ message: `User ${username} created successfully.` });
+    }
+
+    if (action === 'approveUser') {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_approved: true })
+        .eq('username', username);
+      
+      if (error) throw error;
+      return res.status(200).json({ message: `User ${username} approved.` });
     }
 
     if (action === 'removeUser') {

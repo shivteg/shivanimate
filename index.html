@@ -276,7 +276,7 @@ body.is-teacher .teacher-only { display: flex; }
     <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SYSTEM STABILITY UPDATE V2.3 LIVE ✓</div>
     <h2>Welcome Back</h2>
     <div class="login-form">
-      <input type="text" id="login-user" placeholder="Username" autocomplete="username">
+      <input type="text" id="login-user" placeholder="Username or Email" autocomplete="username">
       <input type="password" id="login-pass" placeholder="Password">
       <button class="btn-login" onclick="login()">Sign In</button>
       <div style="margin-top:var(--sp4); font-size:var(--text-sm); color:var(--muted);">
@@ -292,8 +292,9 @@ body.is-teacher .teacher-only { display: flex; }
     <h2>Join ShivAnimate</h2>
     <p style="color:var(--muted); font-size:var(--text-sm); margin-bottom:var(--sp6);">Create an account to start animating</p>
     <div class="login-form">
+      <input type="text" id="signup-user" placeholder="Choose Username">
       <input type="email" id="signup-email" placeholder="Email Address">
-      <input type="password" id="signup-pass" placeholder="Create Password">
+      <input type="password" id="signup-pass" placeholder="Password (min 2 chars)">
       <button class="btn-login" onclick="signup()">Sign Up</button>
       <div style="margin-top:var(--sp4); font-size:var(--text-sm); color:var(--muted);">
         Already have an account? <button class="btn-text" onclick="showView('login')" style="color:var(--primary); font-weight:700;">Sign In</button>
@@ -595,13 +596,15 @@ window.exportPermanentRecord = async () => {
 
 // ── AUTH LOGIC ──
 window.login = async () => {
-  const username = document.getElementById('login-user').value.trim();
+  const identifier = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value.trim();
   
-  if (!username || !pass) return showToast('Enter credentials.');
+  if (!identifier || !pass) return showToast('Enter credentials.');
 
-  // We use a dummy email format for username-based login
-  const email = `${username.toLowerCase().replace(/\s+/g, '_')}@shivanimate.local`;
+  let email = identifier;
+  if (!identifier.includes('@')) {
+    email = `${identifier.toLowerCase().replace(/\s+/g, '_')}@shivanimate.local`;
+  }
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
@@ -613,9 +616,18 @@ window.login = async () => {
   } else {
     currentUser = data.user;
     await fetchAndApplyProfile();
+    
+    // Approval Check: If profile exists but not approved (and not admin), block access.
+    if (currentUser.profile && currentUser.profile.is_approved === false && currentUser.profile.role !== 'admin') {
+      await supabase.auth.signOut();
+      currentUser = null;
+      applyAuthState();
+      return alert('🕒 ACCOUNT PENDING: Your account is awaiting admin approval. Please check back later.');
+    }
+
     applyAuthState();
     showView('animate');
-    showToast('Welcome back, ' + (currentUser.profile?.username || username) + '! ✦');
+    showToast('Welcome back, ' + (currentUser.profile?.username || identifier) + '! ✦');
   }
 };
 
@@ -625,6 +637,31 @@ window.logout = async () => {
   applyAuthState();
   showView('login');
   showToast('Logged out safely.');
+};
+
+window.signup = async () => {
+  const username = document.getElementById('signup-user').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const pass = document.getElementById('signup-pass').value.trim();
+
+  if (!username || !email || !pass) return showToast('Please fill all fields.');
+  if (pass.length < 2) return showToast('Password must be at least 2 characters.');
+  if (!email.includes('@')) return showToast('Please enter a valid email address.');
+
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: pass,
+    options: {
+      data: { username, role: 'student' }
+    }
+  });
+
+  if (error) {
+    showToast('Sign up failed: ' + error.message);
+  } else {
+    showView('login');
+    showToast('Account created! Awaiting admin approval. ✦');
+  }
 };
 
 window.addTeacher = async () => {
@@ -675,6 +712,21 @@ window.addStudent = async () => {
   }
 };
 
+window.approveUser = async (username) => {
+  const res = await fetch('/api/admin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'approveUser', username })
+  });
+  const data = await res.json();
+  if (res.ok) {
+    renderUserLists();
+    showToast('User approved! ✦');
+  } else {
+    showToast('Error: ' + data.error);
+  }
+};
+
 async function renderUserLists() {
   if (!currentUser || currentUser.profile?.role === 'student') return;
   
@@ -682,12 +734,40 @@ async function renderUserLists() {
   const tList = document.getElementById('teacher-list');
 
   // Fetch all profiles
-  const { data: profiles, error } = await supabase.from('profiles').select('*');
+  const { data: profiles, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
   if (error) return console.error(error);
 
   if (sList) {
-    const students = profiles.filter(p => p.role === 'student');
-    sList.innerHTML = students.length ? '' : '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
+    sList.innerHTML = '';
+    
+    // Pending Approvals Section
+    const pending = profiles.filter(p => p.is_approved === false && p.role !== 'admin');
+    if (pending.length > 0) {
+      const hd = document.createElement('div');
+      hd.style = "margin-bottom:12px; font-weight:800; color:var(--accent2); font-size:11px; font-family:var(--f-display); border-bottom:1px solid var(--border); padding-bottom:4px;";
+      hd.textContent = "⏳ PENDING APPROVAL (" + pending.length + ")";
+      sList.appendChild(hd);
+      
+      pending.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'student-item';
+        item.style.borderLeft = "3px solid var(--accent2)";
+        item.innerHTML = `
+          <span>${p.username} <small style="opacity:0.5; font-size:9px;">(${p.role})</small></span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-text" style="color:var(--accent); font-weight:700;" onclick="approveUser('${p.username}')">Approve</button>
+            <button class="btn-text" style="color:var(--hot)" onclick="removeUser('${p.username}')">Reject</button>
+          </div>
+        `;
+        sList.appendChild(item);
+      });
+      const spacer = document.createElement('div'); spacer.style.height = "20px"; sList.appendChild(spacer);
+    }
+
+    const students = profiles.filter(p => p.role === 'student' && p.is_approved !== false);
+    if (students.length === 0 && pending.length === 0) {
+      sList.innerHTML = '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
+    }
     students.forEach(p => {
       const item = document.createElement('div');
       item.className = 'student-item';
@@ -697,7 +777,7 @@ async function renderUserLists() {
   }
 
   if (tList && currentUser.profile?.role === 'admin') {
-    const teachers = profiles.filter(p => p.role === 'teacher');
+    const teachers = profiles.filter(p => p.role === 'teacher' && p.is_approved !== false);
     tList.innerHTML = '';
     teachers.forEach(p => {
       const item = document.createElement('div');
@@ -707,146 +787,6 @@ async function renderUserLists() {
     });
   }
 }
-
-window.removeUser = async (username) => {
-  if (!confirm(`Are you sure you want to remove ${username}?`)) return;
-
-  const res = await fetch('/api/admin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'removeUser', username })
-  });
-  const data = await res.json();
-
-  if (res.ok) {
-    renderUserLists();
-    showToast('User removed successfully.');
-  } else {
-    showToast('Error: ' + data.error);
-  }
-};
-
-window.saveCurrentAnimation = async () => {
-  if (!currentUser) return showToast('Log in to save animations!');
-  if (!currentWord) return showToast('Animate something first!');
-
-  // Check if already exists
-  const { data: existing } = await supabase
-    .from('animations')
-    .select('id')
-    .eq('user_id', currentUser.id)
-    .eq('word', currentWord)
-    .eq('style', currentStyle)
-    .single();
-
-  if (existing) return showToast('Already saved! ✦');
-
-  const { error } = await supabase
-    .from('animations')
-    .insert([{ user_id: currentUser.id, word: currentWord, style: currentStyle }]);
-
-  if (error) {
-    showToast('Save failed: ' + error.message);
-  } else {
-    renderSavedList();
-    showToast('Animation saved to your record! ✦');
-  }
-};
-
-async function renderSavedList() {
-  const wrap = document.getElementById('saved-list-wrap');
-  const list = document.getElementById('saved-items');
-  if (!currentUser || !wrap) return;
-
-  const { data: saved, error } = await supabase
-    .from('animations')
-    .select('*')
-    .eq('user_id', currentUser.id)
-    .order('created_at', { ascending: false });
-
-  if (error) return;
-  
-  if (saved && saved.length > 0) {
-    wrap.style.display = 'flex';
-    list.innerHTML = '';
-    saved.forEach((entry) => {
-      const btn = document.createElement('button');
-      btn.className = 'chip';
-      btn.style.fontSize = '10px';
-      btn.innerHTML = `${entry.word} <span style="opacity:0.5">(${entry.style})</span>`;
-      btn.onclick = () => {
-        document.getElementById('word-input').value = entry.word;
-        currentStyle = entry.style;
-        document.querySelectorAll('.chip').forEach(c => {
-          if (c.textContent.toLowerCase().includes(entry.style)) c.classList.add('active');
-          else c.classList.remove('active');
-        });
-        animateWord();
-      };
-      list.appendChild(btn);
-    });
-  } else {
-    wrap.style.display = 'none';
-  }
-}
-
-function applyAuthState() {
-  document.body.classList.remove('logged-in', 'is-teacher', 'is-admin', 'is-student');
-  if (currentUser) {
-    document.body.classList.add('logged-in');
-    const role = currentUser.profile?.role;
-    if (role === 'admin') document.body.classList.add('is-admin');
-    if (role === 'teacher') document.body.classList.add('is-teacher');
-    if (role === 'student') document.body.classList.add('is-student');
-    renderSavedList();
-  }
-}
-
-function checkAuth() {
-  const isPublicView = location.hash.startsWith('#animate/');
-  const isSignupView = location.hash === '#signup';
-  if (!currentUser && !isPublicView && !isSignupView) {
-    showView('login');
-    return false;
-  }
-  return true;
-}
-
-window.showView = (name) => {
-  const role = currentUser?.profile?.role;
-  
-  // STRICT STUDENT BLOCK
-  if (name === 'teacher' && role === 'student') {
-    showToast('ACCESS DENIED: Dashboard is for teachers only.');
-    return;
-  }
-  
-  if (name !== 'login' && name !== 'public' && name !== 'signup' && !checkAuth()) return;
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const el = document.getElementById('view-' + name);
-  if (el) el.classList.add('active');
-  if (name === 'teacher') renderUserLists();
-};
-
-window.signup = async () => {
-  const email = document.getElementById('signup-email').value.trim();
-  const pass = document.getElementById('signup-pass').value.trim();
-
-  if (!email || !pass) return showToast('Please enter both email and password.');
-  if (!email.includes('@')) return showToast('Please enter a valid email address.');
-
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: pass
-  });
-
-  if (error) {
-    showToast('Sign up failed: ' + error.message);
-  } else {
-    showView('login');
-    showToast('Account created successfully! ✦');
-  }
-};
 
 window.showToast = (msg) => {
   const t = document.getElementById('toast');

@@ -9,6 +9,7 @@ Stores user roles and usernames.
 - `id`: uuid, primary key, references `auth.users(id)` on delete cascade.
 - `username`: text, unique.
 - `role`: text (either 'admin', 'teacher', or 'student').
+- `is_approved`: boolean, default `false`. (New)
 - `created_at`: timestamp with time zone, default `now()`.
 
 ### `animations`
@@ -27,6 +28,7 @@ create table public.profiles (
   id uuid references auth.users on delete cascade not null primary key,
   username text unique not null,
   role text check (role in ('admin', 'teacher', 'student')) not null default 'student',
+  is_approved boolean default false,
   created_at timestamptz default now()
 );
 
@@ -59,13 +61,32 @@ create policy "Users can insert own animations" on public.animations
 
 create policy "Users can delete own animations" on public.animations
   for delete using (auth.uid() = user_id);
+
+-- Trigger to create a profile on signup
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, username, role, is_approved)
+  values (
+    new.id, 
+    coalesce(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)), 
+    coalesce(new.raw_user_meta_data->>'role', 'student'),
+    false
+  );
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
 ```
 
 ## 3. Initial Admin Setup
-After creating your first account (e.g., via the login screen if you've already added the user via SQL or Supabase Dashboard), run this SQL to make yourself an admin:
+After creating your first account, run this SQL to make yourself an admin and approve yourself:
 
 ```sql
-update public.profiles set role = 'admin' where username = 'your_username';
+update public.profiles set role = 'admin', is_approved = true where username = 'your_username';
 ```
 
 ## 4. Environment Variables in Vercel
