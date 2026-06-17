@@ -843,15 +843,8 @@ window.signup = async () => {
   if (error) {
     showToast('Sign up failed: ' + error.message);
   } else {
-    // Show verification notification
-    const mailtoLink = "mailto:shivteg14@gmail.com?subject=Book Submission&body=Hi,";
-    const verificationMsg = `✦ ACCOUNT CREATED! ✦\n\nTo verify your account, please send an email to:\nshivteg14@gmail.com\n\nSubject: Book Submission\nBody: Hi,\n\nClick OK to open your email app and send the verification.`;
-    
-    alert(verificationMsg);
-    window.location.href = mailtoLink;
-    
     showView('login');
-    showToast('Account created! Please verify via email.');
+    showToast('Account created successfully! ✦');
   }
 };
 
