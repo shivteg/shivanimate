@@ -4,19 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shivteg | Robotics Portfolio</title>
-<script>
-  (function(){
-    const authStr = localStorage.getItem('shivanimate_auth');
-    if (!authStr) {
-      window.location.href = 'index.html';
-      return;
-    }
-    const auth = JSON.parse(authStr);
-    if (auth.role === 'student') {
-      window.location.href = 'index.html';
-    }
-  })();
-</script>
 <style>
 :root{
   --bg:#0a0f12;

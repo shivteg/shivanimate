@@ -91,80 +91,6 @@ nav{
 #three-canvas:active{cursor:grabbing;}
 #canvas-placeholder{min-height:360px;display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);color:var(--faint);font-family:var(--f-display);background:linear-gradient(135deg,var(--surface-off),var(--bg));}
 
-/* AUTH & LOGIN */
-.view-login {
-flex: 1;
-display: flex;
-align-items: center;
-justify-content: center;
-padding: var(--sp8) var(--sp4);
-}
-.login-card {
-width: 100%;
-max-width: 400px;
-background: var(--surface);
-border: 1px solid var(--border);
-border-radius: var(--r-xl);
-padding: var(--sp8);
-box-shadow: var(--sh-lg);
-text-align: center;
-}
-.login-card h2 {
-margin-bottom: var(--sp6);
-font-family: var(--f-display);
-background: linear-gradient(135deg, var(--primary), var(--accent));
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-}
-.login-form {
-display: flex;
-flex-direction: column;
-gap: var(--sp4);
-}
-.login-form input {
-padding: var(--sp3) var(--sp4);
-border-radius: var(--r-md);
-border: 1px solid var(--border);
-background: var(--surface-2);
-color: var(--text);
-outline: none;
-}
-.login-form input:focus { border-color: var(--primary); }
-.btn-login {
-padding: var(--sp3);
-border-radius: var(--r-md);
-background: linear-gradient(135deg, var(--primary), var(--accent));
-color: #fff;
-font-weight: 700;
-margin-top: var(--sp2);
-}
-
-/* DASHBOARD */
-#view-teacher {
-flex: 1;
-flex-direction: column;
-align-items: center;
-padding: var(--sp8) var(--sp4);
-}
-.teacher-wrap {
-width: 100%;
-max-width: 600px;
-}
-.student-list {
-margin-top: var(--sp6);
-display: flex;
-flex-direction: column;
-gap: var(--sp3);
-}
-.student-item {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: var(--sp3) var(--sp4);
-background: var(--surface-2);
-border: 1px solid var(--border);
-border-radius: var(--r-md);
-}
 .nav-actions {
 display: flex;
 gap: var(--sp3);
@@ -177,25 +103,6 @@ color: var(--muted);
 transition: color var(--ease);
 }
 .btn-text:hover { color: var(--text); }
-.auth-only { display: none; }
-body.logged-in .auth-only { display: flex; }
-body.is-admin .admin-only { display: block !important; }
-body.is-teacher .teacher-only { display: flex; }
-.admin-only, .teacher-only { display: none; }
-
-/* VERIFICATION BANNER */
-.verify-banner {
-  background: var(--accent2);
-  color: #000;
-  padding: var(--sp3);
-  border-radius: var(--r-md);
-  text-align: center;
-  font-weight: 800;
-  font-size: var(--text-sm);
-  margin-bottom: var(--sp6);
-  border: 3px solid #000;
-  box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
-}
 
 /* SHARE BAR */
 .share-section{display:none;border-top:1px solid var(--border);background:var(--surface);}
@@ -235,90 +142,7 @@ body.is-teacher .teacher-only { display: flex; }
 .pub-try a{color:var(--primary);text-decoration:none;font-weight:600;}
 .pub-try a:hover{text-decoration:underline;}
 
-/* PUZZLE */
-#view-puzzle {
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--sp8) var(--sp4);
-}
-.puzzle-container {
-  width: 100%;
-  max-width: 600px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-xl);
-  padding: var(--sp6);
-  box-shadow: var(--sh-lg);
-  text-align: center;
-}
-.puzzle-grid {
-  display: grid;
-  gap: 4px;
-  margin: var(--sp6) auto;
-  aspect-ratio: 16/9; /* Adjusted later by JS if needed */
-  background: var(--surface-2);
-  border: 2px solid var(--border);
-  border-radius: var(--r-md);
-  overflow: hidden;
-  max-width: 100%;
-}
-.puzzle-piece {
-  background-size: 600px auto; /* Matches container max-width */
-  cursor: pointer;
-  border-radius: 2px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.puzzle-piece:hover {
-  transform: scale(1.02);
-  z-index: 10;
-  box-shadow: 0 0 15px var(--primary);
-}
-.puzzle-piece.selected {
-  outline: 3px solid var(--accent);
-  transform: scale(1.05);
-  z-index: 11;
-}
-.puzzle-controls {
-  display: flex;
-  justify-content: center;
-  gap: var(--sp4);
-  margin-bottom: var(--sp6);
-  flex-wrap: wrap;
-}
-.puzzle-stats {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--sp4);
-  font-family: var(--f-display);
-}
-.timer {
-  font-size: var(--text-lg);
-  color: var(--accent2);
-}
-.level-badge {
-  padding: 4px 12px;
-  background: var(--surface-off);
-  border: 1px solid var(--border);
-  border-radius: var(--r-full);
-  font-size: var(--text-xs);
-  color: var(--primary);
-}
-.puzzle-win {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(10px);
-}
-.puzzle-win.show { display: flex; }
-.puzzle-win h2 { font-size: var(--text-2xl); color: var(--accent); margin-bottom: var(--sp4); }
+
 
 .toast{position:fixed;bottom:var(--sp6);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);padding:var(--sp2) var(--sp6);font-size:var(--text-sm);font-weight:500;box-shadow:var(--sh-md);z-index:999;opacity:0;transition:all .3s ease;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -347,140 +171,14 @@ body.is-teacher .teacher-only { display: flex; }
     <span><span class="p">Shiv</span><span class="c">Animate</span></span>
   </div>
   <div class="nav-actions">
-    <button class="btn-text" onclick="showView('puzzle')" style="color:var(--accent)">🧩 Solve the Puzzle</button>
-    <button class="btn-text auth-only admin-only" onclick="showView('teacher')">Admin Dashboard</button>
-    <button class="btn-text auth-only teacher-only" onclick="showView('teacher')">Teacher Dashboard</button>
-    <button class="btn-text auth-only" onclick="window.open('portfolio.html','_blank')" style="color:var(--accent2)">My Portfolio ↗</button>
-    <button class="btn-text auth-only" onclick="logout()">Logout</button>
+    <button class="btn-text" onclick="window.open('portfolio.html','_blank')" style="color:var(--accent2)">My Portfolio ↗</button>
     <button class="btn-icon" id="theme-btn" aria-label="Toggle theme">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
 </nav>
 
-<div id="view-puzzle" class="view">
-  <div class="puzzle-container">
-    <div class="hero" style="margin-bottom: var(--sp6);">
-      <div class="hero-kicker">Brain Exercise</div>
-      <h1>Solve the Puzzle</h1>
-      <p>Put the picture back together! 🧩</p>
-    </div>
 
-    <div class="puzzle-controls">
-      <button class="chip active" onclick="startPuzzle(1)">Level 1 (3x3)</button>
-      <button class="chip" onclick="startPuzzle(2)">Level 2 (4x4)</button>
-      <button class="chip" onclick="startPuzzle(3)">Level 3 (5x5)</button>
-    </div>
-
-    <div class="puzzle-stats">
-      <span class="level-badge" id="puzzle-level-display">Level 1</span>
-      <span class="timer" id="puzzle-timer">00:00</span>
-    </div>
-
-    <div id="puzzle-grid" class="puzzle-grid">
-      <!-- Puzzle pieces injected by JS -->
-    </div>
-
-    <div style="margin-top: var(--sp8);">
-      <button class="btn-text" onclick="showView('animate')">← Back to Animate</button>
-    </div>
-  </div>
-</div>
-
-<div class="puzzle-win" id="puzzle-win">
-  <div class="login-card" style="background: var(--surface-2);">
-    <div style="font-size: 40px; margin-bottom: 20px;">🏆</div>
-    <h2>Amazing Job!</h2>
-    <p style="color: var(--muted); margin-bottom: 30px;">You solved the puzzle in <span id="win-time" style="color: var(--accent2); font-weight: 800;"></span>!</p>
-    <button class="btn-go" onclick="closeWin()">Play Again ✦</button>
-  </div>
-</div>
-
-<div id="view-login" class="view view-login">
-  <div class="login-card">
-    <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SYSTEM STABILITY UPDATE V2.3 LIVE ✓</div>
-    <h2>Welcome Back</h2>
-    <div class="login-form">
-      <input type="text" id="login-user" placeholder="Username or Email" autocomplete="username">
-      <input type="password" id="login-pass" placeholder="Password">
-      <button class="btn-login" onclick="login()">Sign In</button>
-      <div style="margin-top:var(--sp4); font-size:var(--text-sm); color:var(--muted);">
-        New user? <button class="btn-text" onclick="showView('signup')" style="color:var(--primary); font-weight:700;">Create Account</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="view-signup" class="view view-login">
-  <div class="login-card">
-    <div style="font-size:10px; color:var(--accent); margin-bottom:10px; font-family:monospace;">SECURE REGISTRATION ACTIVE ✓</div>
-    <h2>Join ShivAnimate</h2>
-    <p style="color:var(--muted); font-size:var(--text-sm); margin-bottom:var(--sp6);">Create an account to start animating</p>
-    <div class="login-form">
-      <input type="text" id="signup-user" placeholder="Choose Username">
-      <input type="email" id="signup-email" placeholder="Email Address">
-      <input type="password" id="signup-pass" placeholder="Password (min 2 chars)">
-      <button class="btn-login" onclick="signup()">Sign Up</button>
-      <div style="margin-top:var(--sp4); font-size:var(--text-sm); color:var(--muted);">
-        Already have an account? <button class="btn-text" onclick="showView('login')" style="color:var(--primary); font-weight:700;">Sign In</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="view-teacher" class="view">
-  <div class="teacher-wrap">
-    
-    <!-- HIGH VISIBILITY VERIFICATION BANNER -->
-    <div class="verify-banner">
-      ⚠️ VERIFICATION REQUIRED: To add student or teacher it needs to be verified. <br>
-      To verify do whatsapp message on - 8054830509
-    </div>
-
-    <!-- Admin Section -->
-    <div class="admin-only">
-      <div class="hero" style="margin-bottom: var(--sp6); text-align: left;">
-        <div class="hero-kicker">Admin Dashboard</div>
-        <h1 style="font-size: var(--text-xl);">Manage Teachers</h1>
-        <p style="font-size: var(--text-base);">Admins can add teachers to the system record.</p>
-      </div>
-      <div class="card">
-        <div class="login-form">
-          <input type="text" id="new-teacher-user" placeholder="Teacher Username">
-          <input type="password" id="new-teacher-pass" placeholder="Teacher Password">
-          <button class="btn-go" onclick="addTeacher()">+ Add Teacher</button>
-        </div>
-      </div>
-      <div class="student-list" id="teacher-list" style="margin-bottom: var(--sp4);">
-        <!-- Teachers populated by JS -->
-      </div>
-      <div style="margin-bottom: var(--sp10);">
-        <button class="btn-text" onclick="exportPermanentRecord()" style="color:var(--accent);">💾 Export Permanent Record</button>
-      </div>
-    </div>
-
-    <!-- Teacher/Admin Shared Section -->
-    <div class="hero" style="margin-bottom: var(--sp6); text-align: left;">
-      <div class="hero-kicker">User Management</div>
-      <h1 style="font-size: var(--text-xl);">Add New Students</h1>
-      <p style="font-size: var(--text-base);">Students added here can log in and save their records.</p>
-    </div>
-    <div class="card">
-      <div class="login-form">
-        <input type="text" id="new-student-user" placeholder="Student Username">
-        <input type="password" id="new-student-pass" placeholder="Student Password">
-        <button class="btn-go" onclick="addStudent()">+ Add Student</button>
-      </div>
-    </div>
-    <div class="student-list" id="student-list">
-      <!-- Students populated by JS -->
-    </div>
-
-    <div style="margin-top: var(--sp8);">
-      <button class="btn-text" onclick="showView('animate')">← Back to Animate</button>
-    </div>
-  </div>
-</div>
 
 <div id="view-animate" class="view active">
 <div class="hero">
@@ -528,19 +226,12 @@ body.is-teacher .teacher-only { display: flex; }
         <button class="btn-icon" onclick="replayAnimation()" title="Replay">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
         </button>
-        <button class="btn-icon auth-only" onclick="saveCurrentAnimation()" title="Save Animation">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        </button>
       </div>
     </div>
     <div id="canvas-placeholder">Type a word above ↑</div>
     <canvas id="three-canvas" style="display:none;"></canvas>
 
-    <!-- SAVED LIST -->
-    <div id="saved-list-wrap" class="auth-only" style="padding: var(--sp4); border-top: 1px solid var(--border); display:none; flex-direction:column; gap: var(--sp3);">
-      <div style="font-size: var(--text-xs); color: var(--faint); font-family: var(--f-display); text-transform: uppercase;">Your Saved Animations</div>
-      <div id="saved-items" style="display: flex; gap: var(--sp2); flex-wrap: wrap;"></div>
-    </div>
+
 
     <!-- SHARE SECTION -->
     <div class="share-section" id="share-section">
@@ -613,8 +304,7 @@ body.is-teacher .teacher-only { display: flex; }
 {
   "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/",
-    "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/+esm"
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
   }
 }
 </script>
@@ -634,8 +324,6 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-import { createClient } from '@supabase/supabase-js';
-
 // ── UTILS ──
 function safeParse(str, fallback) {
   try { return str ? JSON.parse(str) : fallback; }
@@ -648,151 +336,8 @@ window.showView = (id) => {
   const target = document.getElementById('view-' + id);
   if (target) {
     target.classList.add('active');
-    if (id === 'puzzle') startPuzzle(1);
-    else stopPuzzle();
   }
 };
-
-window.applyAuthState = () => {
-  document.body.classList.add('logged-in');
-  const role = currentUser?.profile?.role || 'student';
-  document.body.classList.toggle('is-admin', role === 'admin');
-  document.body.classList.toggle('is-teacher', role === 'teacher' || role === 'admin');
-};
-
-// ── PUZZLE LOGIC ──
-let puzzleLevel = 1;
-let puzzleTimerInterval = null;
-let puzzleSeconds = 0;
-let selectedPiece = null;
-const PUZZLE_IMG = 'Screenshot (32).png';
-
-window.startPuzzle = (level) => {
-  puzzleLevel = level;
-  puzzleSeconds = 0;
-  selectedPiece = null;
-  document.getElementById('puzzle-level-display').textContent = `Level ${level}`;
-  document.querySelectorAll('.puzzle-controls .chip').forEach((c, i) => {
-    c.classList.toggle('active', i + 1 === level);
-  });
-  
-  const size = level === 1 ? 3 : (level === 2 ? 4 : 5);
-  initPuzzleGrid(size);
-  startTimer();
-};
-
-function initPuzzleGrid(size) {
-  const grid = document.getElementById('puzzle-grid');
-  grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-  grid.innerHTML = '';
-  
-  let pieces = [];
-  for (let i = 0; i < size * size; i++) pieces.push(i);
-  
-  // Shuffle until it's not the original order
-  do {
-    for (let i = pieces.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
-    }
-  } while (pieces.every((p, i) => p === i));
-  
-  pieces.forEach((correctPos, currentIndex) => {
-    const piece = document.createElement('div');
-    piece.className = 'puzzle-piece';
-    piece.dataset.currentIndex = currentIndex; 
-    piece.dataset.correctIndex = correctPos; 
-    
-    const row = Math.floor(correctPos / size);
-    const col = correctPos % size;
-    
-    const percentX = (col / (size - 1)) * 100;
-    const percentY = (row / (size - 1)) * 100;
-    
-    piece.style.backgroundImage = `url("${PUZZLE_IMG}")`;
-    piece.style.backgroundPosition = `${percentX}% ${percentY}%`;
-    piece.style.backgroundSize = `${size * 100}% auto`;
-    
-    piece.onclick = () => onPieceClick(piece);
-    grid.appendChild(piece);
-  });
-}
-
-function onPieceClick(piece) {
-  if (selectedPiece === null) {
-    selectedPiece = piece;
-    piece.classList.add('selected');
-  } else {
-    if (selectedPiece === piece) {
-      piece.classList.remove('selected');
-      selectedPiece = null;
-      return;
-    }
-    
-    swapPieces(selectedPiece, piece);
-    selectedPiece.classList.remove('selected');
-    selectedPiece = null;
-    checkWin();
-  }
-}
-
-function swapPieces(p1, p2) {
-  const bgPos1 = p1.style.backgroundPosition;
-  const correctIdx1 = p1.dataset.correctIndex;
-  
-  p1.style.backgroundPosition = p2.style.backgroundPosition;
-  p1.dataset.correctIndex = p2.dataset.correctIndex;
-  
-  p2.style.backgroundPosition = bgPos1;
-  p2.dataset.correctIndex = correctIdx1;
-}
-
-function checkWin() {
-  const pieces = document.querySelectorAll('.puzzle-piece');
-  let win = true;
-  pieces.forEach(p => {
-    if (parseInt(p.dataset.currentIndex) !== parseInt(p.dataset.correctIndex)) win = false;
-  });
-  
-  if (win) {
-    stopTimer();
-    document.getElementById('win-time').textContent = formatTime(puzzleSeconds);
-    document.getElementById('puzzle-win').classList.add('show');
-  }
-}
-
-function startTimer() {
-  stopTimer();
-  puzzleSeconds = 0;
-  document.getElementById('puzzle-timer').textContent = '00:00';
-  puzzleTimerInterval = setInterval(() => {
-    puzzleSeconds++;
-    document.getElementById('puzzle-timer').textContent = formatTime(puzzleSeconds);
-  }, 1000);
-}
-
-function stopTimer() {
-  if (puzzleTimerInterval) clearInterval(puzzleTimerInterval);
-}
-
-function formatTime(s) {
-  const mins = Math.floor(s / 60);
-  const secs = s % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
-
-window.closeWin = () => {
-  document.getElementById('puzzle-win').classList.remove('show');
-  startPuzzle(puzzleLevel);
-};
-
-function stopPuzzle() {
-  stopTimer();
-}
-
-// ── SUPABASE CONFIG ──
-let supabase;
-let currentUser = null;
 
 function handleRoute() {
   const hash = location.hash;
@@ -803,270 +348,7 @@ function handleRoute() {
       return;
     }
   }
-  
-  if (hash === '#signup') {
-    showView('signup');
-  } else if (hash === '#puzzle') {
-    showView('puzzle');
-  } else {
-    // Directly launch the animate view, bypassing login wall
-    showView('animate');
-  }
-}
-
-async function initSupabase() {
-  try {
-    const res = await fetch('/api/config');
-    const config = await res.json();
-    if (!config.supabaseUrl || !config.supabaseAnonKey) {
-      console.warn("Supabase keys missing. Site will still function in guest mode.");
-      applyAuthState();
-      handleRoute();
-      return;
-    }
-    supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
-    
-    // Check initial session
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      currentUser = session.user;
-      await fetchAndApplyProfile();
-    }
-    
-    applyAuthState();
-    handleRoute(); // Re-run routing after auth is ready
-  } catch (e) {
-    console.error("Supabase Init Error:", e);
-    applyAuthState();
-    handleRoute();
-  }
-}
-initSupabase();
-
-async function fetchAndApplyProfile() {
-  if (!currentUser) return;
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', currentUser.id)
-    .single();
-  
-  if (profile) {
-    currentUser.profile = profile;
-  }
-}
-
-window.exportPermanentRecord = async () => {
-  if (!supabase) return;
-  const { data: profiles, error } = await supabase.from('profiles').select('*');
-  if (error) return showToast('Export failed: ' + error.message);
-  
-  const record = { 
-    profiles: profiles,
-    exportedAt: new Date().toISOString()
-  };
-  
-  const blob = new Blob([JSON.stringify(record, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'shivanimate_supabase_record.json';
-  a.click();
-  showToast('Record exported! ✦');
-};
-
-// ── AUTH LOGIC ──
-window.login = async () => {
-  const identifier = document.getElementById('login-user').value.trim();
-  const pass = document.getElementById('login-pass').value.trim();
-  
-  if (!identifier || !pass) return showToast('Enter credentials.');
-
-  let email = identifier;
-  if (!identifier.includes('@')) {
-    email = `${identifier.toLowerCase().replace(/\s+/g, '_')}@shivanimate.local`;
-  }
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: pass
-  });
-
-  if (error) {
-    showToast('Login failed: ' + error.message);
-  } else {
-    currentUser = data.user;
-    await fetchAndApplyProfile();
-    
-    // Approval Check: If profile exists but not approved (and not admin), block access.
-    if (currentUser.profile && currentUser.profile.is_approved === false && currentUser.profile.role !== 'admin') {
-      await supabase.auth.signOut();
-      currentUser = null;
-      applyAuthState();
-      return alert('🕒 ACCOUNT PENDING: Your account is awaiting admin approval. Please check back later.');
-    }
-
-    applyAuthState();
-    showView('animate');
-    showToast('Welcome back, ' + (currentUser.profile?.username || identifier) + '! ✦');
-  }
-};
-
-window.logout = async () => {
-  await supabase.auth.signOut();
-  currentUser = null;
-  applyAuthState();
-  showView('login');
-  showToast('Logged out safely.');
-};
-
-window.signup = async () => {
-  const username = document.getElementById('signup-user').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-  const pass = document.getElementById('signup-pass').value.trim();
-
-  if (!username || !email || !pass) return showToast('Please fill all fields.');
-  if (pass.length < 2) return showToast('Password must be at least 2 characters.');
-  if (!email.includes('@')) return showToast('Please enter a valid email address.');
-
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: pass,
-    options: {
-      data: { username, role: 'student' }
-    }
-  });
-
-  if (error) {
-    showToast('Sign up failed: ' + error.message);
-  } else {
-    showView('login');
-    showToast('Account created! Awaiting admin approval. ✦');
-  }
-};
-
-window.addTeacher = async () => {
-  const user = document.getElementById('new-teacher-user').value.trim();
-  const pass = document.getElementById('new-teacher-pass').value.trim();
-  
-  if (!user || !pass) return showToast('Enter both username and password.');
-  alert('⚠️ VERIFICATION REQUIRED: Verification request sent to admin.');
-
-  const res = await fetch('/api/admin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'addUser', username: user, password: pass, role: 'teacher' })
-  });
-  const data = await res.json();
-
-  if (res.ok) {
-    document.getElementById('new-teacher-user').value = '';
-    document.getElementById('new-teacher-pass').value = '';
-    renderUserLists();
-    showToast('Teacher "' + user + '" added! ✦');
-  } else {
-    showToast('Error: ' + data.error);
-  }
-};
-
-window.addStudent = async () => {
-  const user = document.getElementById('new-student-user').value.trim();
-  const pass = document.getElementById('new-student-pass').value.trim();
-
-  if (!user || !pass) return showToast('Enter both username and password.');
-  alert('⚠️ VERIFICATION REQUIRED: Verification request sent to admin.');
-
-  const res = await fetch('/api/admin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'addUser', username: user, password: pass, role: 'student' })
-  });
-  const data = await res.json();
-
-  if (res.ok) {
-    document.getElementById('new-student-user').value = '';
-    document.getElementById('new-student-pass').value = '';
-    renderUserLists();
-    showToast('Student "' + user + '" added! ✦');
-  } else {
-    showToast('Error: ' + data.error);
-  }
-};
-
-window.approveUser = async (username) => {
-  const res = await fetch('/api/admin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'approveUser', username })
-  });
-  const data = await res.json();
-  if (res.ok) {
-    renderUserLists();
-    showToast('User approved! ✦');
-  } else {
-    showToast('Error: ' + data.error);
-  }
-};
-
-async function renderUserLists() {
-  if (!currentUser || currentUser.profile?.role === 'student') return;
-  
-  const sList = document.getElementById('student-list');
-  const tList = document.getElementById('teacher-list');
-
-  // Fetch all profiles
-  const { data: profiles, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-  if (error) return console.error(error);
-
-  if (sList) {
-    sList.innerHTML = '';
-    
-    // Pending Approvals Section
-    const pending = profiles.filter(p => p.is_approved === false && p.role !== 'admin');
-    if (pending.length > 0) {
-      const hd = document.createElement('div');
-      hd.style = "margin-bottom:12px; font-weight:800; color:var(--accent2); font-size:11px; font-family:var(--f-display); border-bottom:1px solid var(--border); padding-bottom:4px;";
-      hd.textContent = "⏳ PENDING APPROVAL (" + pending.length + ")";
-      sList.appendChild(hd);
-      
-      pending.forEach(p => {
-        const item = document.createElement('div');
-        item.className = 'student-item';
-        item.style.borderLeft = "3px solid var(--accent2)";
-        item.innerHTML = `
-          <span>${p.username} <small style="opacity:0.5; font-size:9px;">(${p.role})</small></span>
-          <div style="display:flex; gap:8px;">
-            <button class="btn-text" style="color:var(--accent); font-weight:700;" onclick="approveUser('${p.username}')">Approve</button>
-            <button class="btn-text" style="color:var(--hot)" onclick="removeUser('${p.username}')">Reject</button>
-          </div>
-        `;
-        sList.appendChild(item);
-      });
-      const spacer = document.createElement('div'); spacer.style.height = "20px"; sList.appendChild(spacer);
-    }
-
-    const students = profiles.filter(p => p.role === 'student' && p.is_approved !== false);
-    if (students.length === 0 && pending.length === 0) {
-      sList.innerHTML = '<p style="color:var(--faint); text-align:center;">No students added yet.</p>';
-    }
-    students.forEach(p => {
-      const item = document.createElement('div');
-      item.className = 'student-item';
-      item.innerHTML = `<span>${p.username}</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('${p.username}')">Remove</button>`;
-      sList.appendChild(item);
-    });
-  }
-
-  if (tList && currentUser.profile?.role === 'admin') {
-    const teachers = profiles.filter(p => p.role === 'teacher' && p.is_approved !== false);
-    tList.innerHTML = '';
-    teachers.forEach(p => {
-      const item = document.createElement('div');
-      item.className = 'student-item';
-      item.innerHTML = `<span>${p.username} (Teacher)</span><button class="btn-text" style="color:var(--hot)" onclick="removeUser('${p.username}')">Remove</button>`;
-      tList.appendChild(item);
-    });
-  }
+  showView('animate');
 }
 
 window.showToast = (msg) => {
@@ -1586,7 +868,6 @@ window.goHomeDirect=()=>{
   pubAnimating=false;
 };
 
-applyAuthState();
 window.addEventListener('hashchange',handleRoute);
 handleRoute();
 </script>
